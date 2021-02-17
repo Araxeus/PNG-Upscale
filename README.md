@@ -2,7 +2,7 @@
 > Because Bicubic Interpolation isn't good enough anymore, we are in the Machine Learning Age.
  
  ## [v1.0 is available on MediaFire due to large size](http://www.mediafire.com/file/xbwpmc4f3ztkql4/PNG_Upscale_v1.0.zip/file) 
-* RAR include full "Models" folder 📁 and executable Jar 🖼️ 
+* ZIP include full "Models" folder 📁 and executable Jar 🖼️ 
 * The Models folder needs to be in the same directory as the Jar to use them
 * This program is best used on PNG images
 * ⚠️ Be careful when trying to upsize large pictures, it will take time and resources ⚠️
@@ -56,7 +56,7 @@ There are four trained models integrated into the program :
 
 #### LapSRN
 
-Trained models can be downloaded from [here](https://github.com/fannymonori/TF-LapSRN/tree/master/export).
+> Trained models can be downloaded from [here](https://github.com/fannymonori/TF-LapSRN/tree/master/export).
 
 - Size of the model: between 1-5Mb
 - This model was trained for ~50 iterations with a batch size of 32
@@ -88,7 +88,7 @@ Comparing different algorithms. Scale x4 on monarch.png
 ![Original](https://github.com/Araxeus/PNG-Upscale/blob/main/test/original.png)
 
 
-## x2 demo (85x85 > 170x170)
+## x2 Demo (85x85 > 170x170)
 
 |      Original             |  Bicubic Interpolation    |        EDSR               |
 | ------------------------- |------------------------- |------------------------- |
@@ -101,7 +101,7 @@ Comparing different algorithms. Scale x4 on monarch.png
 > Bicubic Interpolation is the standart resizing technique used by most editing tools like photoship etc..
 
 
-## x4 demo (85x85 > 340x340)
+## x4 Demo (85x85 > 340x340)
 
 |      Original             |  Bicubic Interpolation    |        EDSR               |
 | ------------------------- | ------------------------- | ------------------------- |
