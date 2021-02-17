@@ -11,7 +11,7 @@
 | ------------------------- |------------------------- |------------------------- |
 ![Original](https://github.com/Araxeus/PNG-Upscale/blob/main/test/x2/original.png)   |  ![Bicubic](https://github.com/Araxeus/PNG-Upscale/blob/main/test/x2/input(BicubicX2).png) |  ![EDSR](https://github.com/Araxeus/PNG-Upscale/blob/main/test/x2/input(EDSRx2).png) |
 
-         ESPCN             |       FSRCNN              |        LapSRN             |
+|         ESPCN             |       FSRCNN              |        LapSRN             |
 | ------------------------- | ------------------------- | ------------------------- |
 ![ESPCN](https://github.com/Araxeus/PNG-Upscale/blob/main/test/x2/input(ESPCNx2).png) | ![FSRCNN](https://github.com/Araxeus/PNG-Upscale/blob/main/test/x2/input(FSRCNNx2).png) |  ![LapSRN](https://github.com/Araxeus/PNG-Upscale/blob/main/test/x2/input(LapSRNx2).png) |
 
