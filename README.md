@@ -3,11 +3,12 @@
  
  ## [v1.0 is available on MediaFire due to large size](https://app.mediafire.com/nz88rdbl8u041) 
 * MediaFire Folder include full "Models" folder 📁 and executable Files 🖼️ to download
-* Download the exectable corresponding with your operating system, and the Models folder
-* Its possible to download only some of the models but obviously they wont work in the program
+* Windows64bit[Exe/Jar] / Linux64bit[Jar] / macOS[Jar]
+* :electron:	Download the exectable corresponding with your operating system, and the Models folder
+* It's possible to download only some of the models if you want (It just wont let you use them inside the program)
 * The Models folder needs to be in the same directory as the Jar/Exe to use them
 * This program is best used on PNG images
-* ⚠️ Be careful when trying to upsize large pictures, it will take time and resources ⚠️
+* ⚠️ Be careful when trying to resize large pictures, it can take considerable time and resources ⚠️
 * To upscale an image you just need to choose a mode, load a picture and press start
 * Save button can be used to choose an output folder *before* you start the process
 * You can double click the text box to change from Dark <-> Light theme (disabled when upScaling)
