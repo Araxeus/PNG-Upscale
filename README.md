@@ -1,5 +1,12 @@
-# PNG Upscale
- AI Super - Resolution
+# :fire: PNG Upscale -  AI Super Resolution :fire:
+
+ 
+ ## [v1.0 is available on MediaFire due to large size](http://www.mediafire.com/file/xbwpmc4f3ztkql4/PNG_Upscale_v1.0.zip/file) 
+* RAR include "Models" folder 📁 and executable Jar 🖼️ 
+* The Models folder needs to be in the same directory as the Jar to use them
+* This program is best used on PNG images
+⚠️ Be careful when trying to upsize large pictures, it will take time and resources ⚠️
+
  
 ## As a Demo this image was resized from 256x256 to 85x85, and then upscaled using this program
 
