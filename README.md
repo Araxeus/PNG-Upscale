@@ -18,10 +18,11 @@
 ## x4 demo (85x85 > 340x340)
 
 |      Original             |  Bicubic Interpolation    |        EDSR               |
- ------------------------- | ------------------------- | ------------------------- |
+| ------------------------- | ------------------------- | ------------------------- |
 ![Original](https://github.com/Araxeus/PNG-Upscale/blob/main/test/x4/original.png)   |  ![Bicubic](https://github.com/Araxeus/PNG-Upscale/blob/main/test/x4/input(BicubicX4).png)|  ![EDSR](https://github.com/Araxeus/PNG-Upscale/blob/main/test/x4/input(EDSRx4).png)|
- ------------------------- | ------------------------- | ------------------------- |
-         ESPCN             |       FSRCNN              |        LapSRN             |
- ------------------------- | ------------------------- | ------------------------- |
+
+ 
+|        ESPCN             |       FSRCNN              |        LapSRN             |
+| ------------------------- | ------------------------- | ------------------------- |
 ![ESPCN](https://github.com/Araxeus/PNG-Upscale/blob/main/test/x4/input(ESPCNx4).png)   |  ![FSRCNN](https://github.com/Araxeus/PNG-Upscale/blob/main/test/x4/input(FSRCNNx4).png)|  ![LapSRN](https://github.com/Araxeus/PNG-Upscale/blob/main/test/x4/input(LapSRNx4).png)|
 
