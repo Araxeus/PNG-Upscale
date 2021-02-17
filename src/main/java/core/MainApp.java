@@ -14,6 +14,7 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 
 import com.formdev.flatlaf.extras.FlatSVGIcon;
+import com.google.common.base.Stopwatch;
 
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.system.MemoryUtil;
@@ -47,6 +48,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.Enumeration;
+import java.util.concurrent.TimeUnit;
 
 public class MainApp {
     //[0]=Button Name, [1]=Algorithm, [2]=Scale
@@ -68,20 +70,24 @@ public class MainApp {
         {"LapSRNx4", LA, "4"}, // 10
         {"LapSRNx8", LA, "8"} // 11
     };
+    public static final Color SVGBLUE = new Color(115, 208, 244),
+	                          SCARLET = new Color(255, 36, 0),
+                              LIGHT = new Color(194,236,255),
+                              DARK = new Color(17,19,19);
     private JFrame frame;
     private JSplitPane upperSplitPane;
     private JTextPane console;
     private JTabbedPane tabbedPane;
+
     private ButtonGroup mode;
+
     private JButton startButton,
                     loadButton,
                     saveButton;
     private JRadioButton btnLapSRNx8;
     private final Icon whiteLoadingGIF, 
                        blackLoadingGIF;
-    public static final Color SVGBLUE = new Color(115, 208, 244),
-	                          SCARLET = new Color(255, 36, 0);
-    private long clickTimer = 0;
+    
     private FlatSVGIcon startSVG,
                         loadSVG,
                         loadOkSVG,
@@ -92,6 +98,9 @@ public class MainApp {
 
     private String loadPath,
                    savePath;
+
+    private long clickTimer = 0;
+
 
     private static MainApp window;
 
@@ -111,6 +120,7 @@ public class MainApp {
                 window.setSelected();
                 window.startTabbedPanel();
                 window.frame.setVisible(true);
+                window.console.grabFocus();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -344,10 +354,8 @@ public class MainApp {
         startButton.setVerticalTextPosition(SwingConstants.BOTTOM);
         startButton.setHorizontalTextPosition(SwingConstants.CENTER);
         startButton.addActionListener(e -> {
-            if (loadPath != null) {
-                write("Started Upscale Process", null);
+            if (loadPath != null) 
                 createWorker().execute();
-            }
             else
                 write("Load File First !", SCARLET);
         });
@@ -443,21 +451,56 @@ public class MainApp {
         }
     }
 
+    private Stopwatch stopwatch;
+
     public SwingWorker<Boolean, Integer> createWorker() {
         return new SwingWorker<Boolean, Integer>() {
             @Override
             protected Boolean doInBackground() throws Exception {
                 setMode(false);
-                Upscale.run(loadPath, savePath);
-                return true;
+                stopwatch = Stopwatch.createStarted();
+                return Upscale.run(loadPath, savePath);
             }       
 
             @Override
             protected void done() {
+                boolean success = false;
+                try {
+                    success = get();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+                stopwatch.stop();
                 setMode(true);
-                savePath = null;
+                if(success) {
+                    savePath = null;
+                    printStopwatch();
+                }        
             }
         };
+    }
+
+    private void printStopwatch() {
+        long minutes = stopwatch.elapsed(TimeUnit.MINUTES);
+        long seconds = stopwatch.elapsed(TimeUnit.SECONDS);
+        String minutesString = "";
+        if(minutes!=0) {
+            seconds = seconds%60;
+            minutesString = minutes+" ";
+            if(minutes>1)
+                minutesString+="Minutes";
+            else
+                minutesString+="Minute";
+        }
+        String secondsString="";
+        if(!minutesString.equals(""))
+            secondsString+=", ";
+        secondsString+=seconds;
+        secondsString += " Second";
+        if(seconds!=1)
+            secondsString += "s";
+        if(seconds > 10 || minutes >= 1)
+            write("Done In " + minutesString + secondsString,null);
     }
 
     public static void write(String text, Color color) {
@@ -524,10 +567,14 @@ public class MainApp {
 	        if(next)
                 Config.FIELD03.setValue(!Config.FIELD03.getBoolean());
 
-	        if(Config.FIELD03.getBoolean()) 
+	        if(Config.FIELD03.getBoolean()) {
                 com.formdev.flatlaf.intellijthemes.FlatGruvboxDarkHardIJTheme.install();
-            else
+                UIManager.put("TabbedPane.selectedBackground", DARK);
+            }
+            else {
                 com.formdev.flatlaf.intellijthemes.FlatCyanLightIJTheme.install();
+                UIManager.put("TabbedPane.selectedBackground", LIGHT);
+            }
 
 	        if(next)SwingUtilities.updateComponentTreeUI(frame); 
 	    }
