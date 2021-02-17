@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.github.araxeus</groupId>
+    <artifactId>png-upscale</artifactId>
+    <version>1.0</version>
+
+    <properties>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <lwjgl.version>3.2.3</lwjgl.version>
+        <javacpp.platform>windows-x86_64</javacpp.platform>
+    </properties>
+
+    <profiles>
+        <profile><id>lwjgl-natives-linux-amd64</id><activation><os><family>unix</family><arch>amd64</arch></os></activation><properties><lwjgl.natives>natives-linux</lwjgl.natives></properties></profile>
+        <profile><id>lwjgl-natives-linux-aarch64</id><activation><os><family>unix</family><arch>aarch64</arch></os></activation><properties><lwjgl.natives>natives-linux-arm64</lwjgl.natives></properties></profile>
+        <profile><id>lwjgl-natives-linux-arm</id><activation><os><family>unix</family><arch>arm</arch></os></activation><properties><lwjgl.natives>natives-linux-arm32</lwjgl.natives></properties></profile>
+        <profile><id>lwjgl-natives-linux-arm32</id><activation><os><family>unix</family><arch>arm32</arch></os></activation><properties><lwjgl.natives>natives-linux-arm32</lwjgl.natives></properties></profile>
+        <profile><id>lwjgl-natives-macos-amd64</id><activation><os><family>mac</family><arch>amd64</arch></os></activation><properties><lwjgl.natives>natives-macos</lwjgl.natives></properties></profile>
+        <profile><id>lwjgl-natives-windows-amd64</id><activation><os><family>windows</family><arch>amd64</arch></os></activation><properties><lwjgl.natives>natives-windows</lwjgl.natives></properties></profile>
+        <profile><id>lwjgl-natives-windows-x86</id><activation><os><family>windows</family><arch>x86</arch></os></activation><properties><lwjgl.natives>natives-windows-x86</lwjgl.natives></properties></profile>
+    </profiles>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.lwjgl</groupId>
+                <artifactId>lwjgl-bom</artifactId>
+                <version>${lwjgl.version}</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>    
+
+    <dependencies>
+
+          <dependency>
+            <groupId>org.bytedeco</groupId>
+            <artifactId>opencv-platform</artifactId>
+            <version>4.4.0-1.5.4</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.formdev</groupId>
+            <artifactId>flatlaf</artifactId>
+            <version>1.0-rc3</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.formdev</groupId>
+            <artifactId>flatlaf-intellij-themes</artifactId>
+            <version>1.0-rc3</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.formdev</groupId>
+            <artifactId>svgSalamander</artifactId>
+            <version>1.1.2.4</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.formdev</groupId>
+            <artifactId>flatlaf-extras</artifactId>
+            <version>1.0</version>
+        </dependency>
+       
+            <dependency>
+                <groupId>org.lwjgl</groupId>
+                <artifactId>lwjgl</artifactId>
+            </dependency>
+            <dependency>
+                <groupId>org.lwjgl</groupId>
+                <artifactId>lwjgl-nfd</artifactId>
+            </dependency>
+            <dependency>
+                <groupId>org.lwjgl</groupId>
+                <artifactId>lwjgl</artifactId>
+                <classifier>${lwjgl.natives}</classifier>
+            </dependency>
+            <dependency>
+                <groupId>org.lwjgl</groupId>
+                <artifactId>lwjgl-nfd</artifactId>
+                <classifier>${lwjgl.natives}</classifier>
+            </dependency>
+
+    </dependencies>
+
+    
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <release>15</release>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.2.0</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <mainClass>core.MainApp</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.3.0</version>
+                <configuration>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <mainClass>core.MainApp</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id> <!-- this is used for inheritance merges -->
+                        <phase>package</phase> <!-- bind to the packaging phase -->
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            
+        </plugins>
+    </build>
+
+</project>
