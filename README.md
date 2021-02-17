@@ -2,7 +2,7 @@
 > Because Bicubic Interpolation isn't good enough anymore, we are in the Machine Learning Age.
  
  ## [v1.0 is available on MediaFire due to large size](http://www.mediafire.com/file/xbwpmc4f3ztkql4/PNG_Upscale_v1.0.zip/file) 
-* RAR include full "Models" folder 📁 and executable Jar 🖼️ 
+* ZIP include full "Models" folder 📁 and executable Jar 🖼️ 
 * The Models folder needs to be in the same directory as the Jar to use them
 * This program is best used on PNG images
 * ⚠️ Be careful when trying to upsize large pictures, it will take time and resources ⚠️
