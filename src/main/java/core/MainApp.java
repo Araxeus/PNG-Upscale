@@ -349,7 +349,7 @@ public class MainApp {
         startPanel.setMinimumSize(new Dimension(70, 75));
         leftSplitPane.setRightComponent(startPanel);
         startPanel.setLayout(new BorderLayout(0, 0));
-        startSVG = new FlatSVGIcon("play.svg", 36, 36, ClassLoader.getSystemClassLoader());
+        startSVG = new FlatSVGIcon("start.svg", 36, 36, ClassLoader.getSystemClassLoader());
         startButton = new JButton("Start", startSVG);
         startButton.setVerticalTextPosition(SwingConstants.BOTTOM);
         startButton.setHorizontalTextPosition(SwingConstants.CENTER);
@@ -371,7 +371,7 @@ public class MainApp {
         loadPanel.setLayout(new BorderLayout(0, 0));
         loadPanel.setMinimumSize(new Dimension(60, 75));
 
-        loadSVG = new FlatSVGIcon("download.svg", 36, 36, ClassLoader.getSystemClassLoader());
+        loadSVG = new FlatSVGIcon("load.svg", 36, 36, ClassLoader.getSystemClassLoader());
         loadOkSVG = new FlatSVGIcon("loadOK.svg", 36, 36, ClassLoader.getSystemClassLoader());
         loadButton = new JButton("Load", loadSVG);
         loadButton.setVerticalTextPosition(SwingConstants.BOTTOM);
@@ -402,7 +402,7 @@ public class MainApp {
         savePanel.setMinimumSize(new Dimension(60, 75));
 
         saveOkSVG = new FlatSVGIcon("saveOK.svg", 36, 36, ClassLoader.getSystemClassLoader());
-        saveSVG = new FlatSVGIcon("upload.svg", 36, 36, ClassLoader.getSystemClassLoader());
+        saveSVG = new FlatSVGIcon("save.svg", 36, 36, ClassLoader.getSystemClassLoader());
         saveButton = new JButton("Save", saveSVG);
         saveButton.setVerticalTextPosition(SwingConstants.BOTTOM);
         saveButton.setHorizontalTextPosition(SwingConstants.CENTER);
