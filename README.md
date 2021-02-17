@@ -8,7 +8,7 @@
 * It's possible to download only some of the models if you want (It just wont let you use them inside the program)
 * The Models folder needs to be in the same directory as the Jar/Exe to use them
 * This program is best used on PNG images
-* ⚠️ Be careful when trying to resize large pictures, it can take considerable time and resources ⚠️
+* ⚠️ Be careful when trying to resize very large pictures, it can take considerable time and resources ⚠️
 * To upscale an image you just need to choose a mode, load a picture and press start
 * Save button can be used to choose an output folder *before* you start the process
 * You can double click the text box to change from Dark <-> Light theme (disabled when upScaling)
@@ -25,12 +25,12 @@ There are four trained models integrated into the program :
 
 > Trained models can be downloaded from [here](https://github.com/Saafke/EDSR_Tensorflow/tree/master/models).
 
-- Size of the model: ~38.5MB. This is a quantized version, so that it can be uploaded to GitHub. (Original was 150MB.)
+- Size of the model: ~38.5MB x3. This is a quantized version, so that it can be uploaded to GitHub. (Original was 150MB each.)
 - This model was trained for 3 days with a batch size of 16
 - Link to implementation code: https://github.com/Saafke/EDSR_Tensorflow
 - x2, x3, x4 trained models available
-- Advantage: Highly accurate
-- Disadvantage: Slow and large filesize
+- Advantage: <ins>*Highly accurate*</ins>
+- Disadvantage: <ins>*Slow*</ins> and large filesize
 - Speed: < 3 sec for every scaling factor on 256x256 images on an Intel i7-9700K CPU.
 - Original paper: [Enhanced Deep Residual Networks for Single Image Super-Resolution](https://arxiv.org/pdf/1707.02921.pdf) [1]
 
@@ -38,7 +38,7 @@ There are four trained models integrated into the program :
 
 > Trained models can be downloaded from [here](https://github.com/fannymonori/TF-ESPCN/tree/master/export).
 
-- Size of the model: ~100kb
+- Size of the model: ~100kb x3
 - This model was trained for ~100 iterations with a batch size of 32
 - Link to implementation code: https://github.com/fannymonori/TF-ESPCN
 - x2, x3, x4 trained models available
@@ -51,7 +51,7 @@ There are four trained models integrated into the program :
 
 > Trained models can be downloaded from [here](https://github.com/Saafke/FSRCNN_Tensorflow/tree/master/models).
 
-- Size of the model: ~40KB (~9kb for FSRCNN-small)
+- Size of the model: ~40KB x3
 - This model was trained for ~30 iterations with a batch size of 1
 - Link to implementation code: https://github.com/Saafke/FSRCNN_Tensorflow
 - Advantage: Fast, small and accurate
@@ -64,7 +64,7 @@ There are four trained models integrated into the program :
 
 > Trained models can be downloaded from [here](https://github.com/fannymonori/TF-LapSRN/tree/master/export).
 
-- Size of the model: between 1-5Mb
+- Size of the model: between 1-5Mb x3
 - This model was trained for ~50 iterations with a batch size of 32
 - Link to implementation code: https://github.com/fannymonori/TF-LAPSRN
 - x2, x4, x8 trained models available
