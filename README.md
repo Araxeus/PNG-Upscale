@@ -13,7 +13,7 @@
 
 ## Models
 
-There are four trained models integrated into the program
+There are four trained models integrated into the program :
 
 #### EDSR
 
