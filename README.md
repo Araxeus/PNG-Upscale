@@ -56,7 +56,7 @@ There are four trained models integrated into the program :
 
 #### LapSRN
 
-Trained models can be downloaded from [here](https://github.com/fannymonori/TF-LapSRN/tree/master/export).
+> Trained models can be downloaded from [here](https://github.com/fannymonori/TF-LapSRN/tree/master/export).
 
 - Size of the model: between 1-5Mb
 - This model was trained for ~50 iterations with a batch size of 32
@@ -88,7 +88,7 @@ Comparing different algorithms. Scale x4 on monarch.png
 ![Original](https://github.com/Araxeus/PNG-Upscale/blob/main/test/original.png)
 
 
-## x2 demo (85x85 > 170x170)
+## x2 Demo (85x85 > 170x170)
 
 |      Original             |  Bicubic Interpolation    |        EDSR               |
 | ------------------------- |------------------------- |------------------------- |
@@ -101,7 +101,7 @@ Comparing different algorithms. Scale x4 on monarch.png
 > Bicubic Interpolation is the standart resizing technique used by most editing tools like photoship etc..
 
 
-## x4 demo (85x85 > 340x340)
+## x4 Demo (85x85 > 340x340)
 
 |      Original             |  Bicubic Interpolation    |        EDSR               |
 | ------------------------- | ------------------------- | ------------------------- |
