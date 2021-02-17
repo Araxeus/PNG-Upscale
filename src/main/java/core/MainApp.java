@@ -71,15 +71,23 @@ public class MainApp {
     private JFrame frame;
     private JSplitPane upperSplitPane;
     private JTextPane console;
+    private JTabbedPane tabbedPane;
     private ButtonGroup mode;
-    private JButton startButton;
+    private JButton startButton,
+                    loadButton,
+                    saveButton;
     private JRadioButton btnLapSRNx8;
     private final Icon whiteLoadingGIF, 
                        blackLoadingGIF;
     public static final Color SVGBLUE = new Color(115, 208, 244),
 	                          SCARLET = new Color(255, 36, 0);
     private long clickTimer = 0;
-    private FlatSVGIcon startSVG;
+    private FlatSVGIcon startSVG,
+                        loadSVG,
+                        loadOkSVG,
+                        saveSVG,
+                        saveOkSVG;
+
     private MouseAdapter skinChanger;
 
     private String loadPath,
@@ -101,6 +109,7 @@ public class MainApp {
             try {
                 window = new MainApp();
                 window.setSelected();
+                window.startTabbedPanel();
                 window.frame.setVisible(true);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -109,7 +118,7 @@ public class MainApp {
     }
 
     public MainApp() {
-        // JFrame.setDefaultLookAndFeelDecorated(true); //custom window decoration
+        JFrame.setDefaultLookAndFeelDecorated(true); //custom window decoration
         setSkin(false);
         UIManager.put("TabbedPane.showTabSeparators", true);
         whiteLoadingGIF = new ImageIcon(MainApp.class.getClassLoader().getResource("loadingWHITE.gif"));
@@ -121,7 +130,7 @@ public class MainApp {
         frame = new JFrame();
         frame.setIconImage((new ImageIcon(MainApp.class.getClassLoader().getResource("Icon.png")).getImage()));
         frame.setAutoRequestFocus(true);
-        frame.setMinimumSize(new Dimension(500, 150));
+        frame.setMinimumSize(new Dimension(500, 180));
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.getContentPane().setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.X_AXIS));
         //set default appearance to middle of the screen
@@ -134,7 +143,7 @@ public class MainApp {
         JSplitPane mainSplitPane = new JSplitPane();
         mainSplitPane.setEnabled(true);
         mainSplitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
-        mainSplitPane.setResizeWeight(0.5);
+        mainSplitPane.setResizeWeight(0.55);
 
         frame.getContentPane().add(mainSplitPane);
         //console
@@ -161,7 +170,7 @@ public class MainApp {
         mainSplitPane.setRightComponent(scrollPane);
 
         upperSplitPane = new JSplitPane();
-        upperSplitPane.setMinimumSize(new Dimension(400, 100));
+        upperSplitPane.setMinimumSize(new Dimension(400, 90));
         upperSplitPane.setEnabled(false);
         upperSplitPane.setResizeWeight(1.0);
         mainSplitPane.setLeftComponent(upperSplitPane);
@@ -172,7 +181,7 @@ public class MainApp {
         leftSplitPane.setResizeWeight(0.7);
         upperSplitPane.setLeftComponent(leftSplitPane);
 
-        JTabbedPane tabbedPane = new JTabbedPane(SwingConstants.TOP);
+        tabbedPane = new JTabbedPane(SwingConstants.TOP);
         tabbedPane.setMinimumSize(new Dimension(255, 75));
         leftSplitPane.setLeftComponent(tabbedPane);
 
@@ -354,8 +363,9 @@ public class MainApp {
         loadPanel.setLayout(new BorderLayout(0, 0));
         loadPanel.setMinimumSize(new Dimension(60, 75));
 
-        FlatSVGIcon loadSVG = new FlatSVGIcon("download.svg", 36, 36, ClassLoader.getSystemClassLoader());
-        JButton loadButton = new JButton("Load", loadSVG);
+        loadSVG = new FlatSVGIcon("download.svg", 36, 36, ClassLoader.getSystemClassLoader());
+        loadOkSVG = new FlatSVGIcon("loadOK.svg", 36, 36, ClassLoader.getSystemClassLoader());
+        loadButton = new JButton("Load", loadSVG);
         loadButton.setVerticalTextPosition(SwingConstants.BOTTOM);
         loadButton.setHorizontalTextPosition(SwingConstants.CENTER);
         loadButton.addActionListener(e -> {
@@ -366,6 +376,7 @@ public class MainApp {
                     Config.FIELD01.setValue(new File(loadPath).getParent());
 					write("Loaded "+loadPath,null);
 					NativeFileDialog.nNFD_Free(path.get(0));
+                    loadButton.setIcon(loadOkSVG);
 					break;
 				case NativeFileDialog.NFD_CANCEL:
 					write("Canceled Image Selection",null);
@@ -382,8 +393,9 @@ public class MainApp {
         savePanel.setLayout(new BorderLayout(0, 0));
         savePanel.setMinimumSize(new Dimension(60, 75));
 
-        FlatSVGIcon saveSVG = new FlatSVGIcon("upload.svg", 36, 36, ClassLoader.getSystemClassLoader());
-        JButton saveButton = new JButton("Save", saveSVG);
+        saveOkSVG = new FlatSVGIcon("saveOK.svg", 36, 36, ClassLoader.getSystemClassLoader());
+        saveSVG = new FlatSVGIcon("upload.svg", 36, 36, ClassLoader.getSystemClassLoader());
+        saveButton = new JButton("Save", saveSVG);
         saveButton.setVerticalTextPosition(SwingConstants.BOTTOM);
         saveButton.setHorizontalTextPosition(SwingConstants.CENTER);
         saveButton.addActionListener(e -> {
@@ -394,6 +406,7 @@ public class MainApp {
 					savePath = path.getStringUTF8(0)+".png";
 					write("Saving to "+savePath,null);
 					NativeFileDialog.nNFD_Free(path.get(0));
+                    saveButton.setIcon(saveOkSVG);
 					break;
 				case NativeFileDialog.NFD_CANCEL:
 					write("Canceled Save Location Selection",null);
@@ -404,7 +417,7 @@ public class MainApp {
         });
         savePanel.add(saveButton, BorderLayout.CENTER);
         frame.pack();
-        mainSplitPane.setDividerLocation(0.5);
+        mainSplitPane.setDividerLocation(0.47);
     }
 
     public void setMode(boolean mode) {
@@ -412,6 +425,8 @@ public class MainApp {
         if(mode) {
             startButton.setIcon(startSVG);
             startButton.setText("Start");
+            saveButton.setIcon(saveSVG);
+            loadButton.setIcon(loadSVG);
             console.addMouseListener(skinChanger);
             return;
         }
@@ -491,6 +506,17 @@ public class MainApp {
             if(button.getActionCommand().equals(Config.FIELD02.getString()))
                 button.setSelected(true);
         }       
+     }
+
+     private void startTabbedPanel(){
+         int index;
+         switch(Config.FIELD02.getString().substring(0, 2)) {
+            case "ES": index = 0; break;
+            case "ED": index = 1; break;
+            case "FS": index = 2; break;
+            default: index = 3;
+         }
+         tabbedPane.setSelectedIndex(index);
      }
 	  	
 	    private void setSkin(boolean next) {

@@ -13,26 +13,32 @@ public class Upscale {
 
     @SuppressWarnings({"java:S2095","java:S2093"})
     public static void run(String loadPath, String savePath) {
+
         String[] mode = MainApp.getMode();
-        if(savePath == null) {
-            StringBuilder sb = new StringBuilder(loadPath);
-            savePath = sb.insert(sb.lastIndexOf("."),"("+mode[0]+")").toString();
-        }
+
+        //should never happen
         if (mode[0].equals("ERROR")) {
             MainApp.write("Error Loading Config", MainApp.SCARLET);
             return;
         }
+
+        //no savePath option
+        if(savePath == null) {
+            StringBuilder sb = new StringBuilder(loadPath);
+            savePath = sb.insert(sb.lastIndexOf("."),"("+mode[0]+")").toString();
+        }
+
         MainApp.write("Loading Image",null);
         Mat image = imread(loadPath);
         if (image.empty()) {
-            MainApp.write("error loading image",MainApp.SCARLET);
+            MainApp.write("Error Loading Image",MainApp.SCARLET);
             return;
         }
+        String modelName = "Models/"+mode[0]+".pb";
         Mat imageNew = new Mat();
         MainApp.write("Loading AI",null);
         DnnSuperResImpl sr = null;
             try {
-                String modelName = "Models/"+mode[0]+".pb";
                 sr = new DnnSuperResImpl();
                 //File modelPath = new File(Upscale.class.getClassLoader().getResource(modelName).toURI());
                    File modelPath = new File(new File(Upscale.class.getProtectionDomain().getCodeSource().getLocation()
@@ -51,6 +57,7 @@ public class Upscale {
                     MainApp.write("Error UpScaling !",MainApp.SCARLET);
                     return;
                 }
+
                 MainApp.write("Image was successfully upScaled by a Factor of x"+mode[2]+" and saved to:",null);
                 MainApp.write("\t"+savePath,MainApp.SVGBLUE);
                 Config.FIELD02.setValue(mode[0]);
