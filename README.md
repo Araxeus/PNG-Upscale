@@ -15,6 +15,7 @@
 * You can double click the text box to change [Dark <-> Light] theme (disabled when upScaling)
 * Use PNG images for best results
 
+ ---
 
 ## Models
 
@@ -22,9 +23,8 @@
 
 There are four trained models integrated into the program :
 
-#### EDSR
-
-> Trained models can be downloaded from [here](https://github.com/Saafke/EDSR_Tensorflow/tree/master/models).
+### EDSR 
+##### [Best Quality]+[Slowest]
 
 - Size of the model: ~38.5MB x3. This is a quantized version, so that it can be uploaded to GitHub. (Original was 150MB each.)
 - This model was trained for 3 days with a batch size of 16
@@ -35,9 +35,10 @@ There are four trained models integrated into the program :
 - Speed: < 3 sec for every scaling factor on 256x256 images on an Intel i7-9700K CPU.
 - Original paper: [Enhanced Deep Residual Networks for Single Image Super-Resolution](https://arxiv.org/pdf/1707.02921.pdf) [1]
 
-#### ESPCN
+> Trained models can be downloaded from [here](https://github.com/Saafke/EDSR_Tensorflow/tree/master/models).
 
-> Trained models can be downloaded from [here](https://github.com/fannymonori/TF-ESPCN/tree/master/export).
+### ESPCN
+##### [Fast]
 
 - Size of the model: ~100kb x3
 - This model was trained for ~100 iterations with a batch size of 32
@@ -48,9 +49,10 @@ There are four trained models integrated into the program :
 - Speed: < 0.01 sec for every scaling factor on 256x256 images on an Intel i7-9700K CPU.
 - Original paper: [Real-Time Single Image and Video Super-Resolution Using an Efficient Sub-Pixel Convolutional Neural Network](https://arxiv.org/pdf/1707.02921.pdf) [2]
 
-#### FSRCNN
+> Trained models can be downloaded from [here](https://github.com/fannymonori/TF-ESPCN/tree/master/export).
 
-> Trained models can be downloaded from [here](https://github.com/Saafke/FSRCNN_Tensorflow/tree/master/models).
+### FSRCNN
+##### [Fast]
 
 - Size of the model: ~40KB x3
 - This model was trained for ~30 iterations with a batch size of 1
@@ -61,9 +63,10 @@ There are four trained models integrated into the program :
 - Notes: FSRCNN-small has fewer parameters, thus less accurate but faster.
 - Original paper: [Accelerating the Super-Resolution Convolutional Neural Network](http://mmlab.ie.cuhk.edu.hk/projects/FSRCNN.html) [3]
 
-#### LapSRN
+> Trained models can be downloaded from [here](https://github.com/Saafke/FSRCNN_Tensorflow/tree/master/models).
 
-> Trained models can be downloaded from [here](https://github.com/fannymonori/TF-LapSRN/tree/master/export).
+### LapSRN
+##### [Has x8]
 
 - Size of the model: between 1-5Mb x3
 - This model was trained for ~50 iterations with a batch size of 32
@@ -73,6 +76,10 @@ There are four trained models integrated into the program :
 - Disadvantage: It is slower than ESPCN and FSRCNN, and the accuracy is worse than EDSR.
 - Speed: < 0.1 sec for every scaling factor on 256x256 images on an Intel i7-9700K CPU.
 - Original paper: [Deep laplacian pyramid networks for fast and accurate super-resolution](https://arxiv.org/pdf/1707.02921.pdf) [4]
+
+> Trained models can be downloaded from [here](https://github.com/fannymonori/TF-LapSRN/tree/master/export).
+
+ ---
 
 ### Benchmarks
 
