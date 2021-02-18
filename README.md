@@ -1,10 +1,10 @@
 # :fire: PNG Upscale -  AI Super Resolution :fire:
-> Because Bicubic Interpolation isn't good enough anymore, we are in the Machine Learning Age.
+> `Because Bicubic Interpolation isn't good enough anymore, we are in the Machine Learning Age.`
  
  ## [v1.0 is available on MediaFire due to large size](https://app.mediafire.com/nz88rdbl8u041) 
 * MediaFire Folder include full "[Models](http://www.mediafire.com/folder/05txvvxyww7ek/Models)" folder 📁 and executable Files 🖼️ to download
 
-* Windows64bit [[Exe]](http://www.mediafire.com/file/1zimjhmqm6bbslp/png-upscale-1.0_Windows64bit.exe/file) / [[Jar]](http://www.mediafire.com/file/8aacwpegzjlrhv0/png-upscale-1.0_Windows64bit.jar/file) / Linux64bit [[Jar]](http://www.mediafire.com/file/07e2dma5xpd2wro/png-upscale-1.0_LINUX_64bit.jar/file) / macOS [[Jar]](http://www.mediafire.com/file/ubeqpou9lhkviov/png-upscale-1.0_macOS_64bit.jar/file)
+* `Windows64bit` [[Exe]](http://www.mediafire.com/file/1zimjhmqm6bbslp/png-upscale-1.0_Windows64bit.exe/file) / [[Jar]](http://www.mediafire.com/file/8aacwpegzjlrhv0/png-upscale-1.0_Windows64bit.jar/file) / `Linux64bit` [[Jar]](http://www.mediafire.com/file/07e2dma5xpd2wro/png-upscale-1.0_LINUX_64bit.jar/file) / `macOS` [[Jar]](http://www.mediafire.com/file/ubeqpou9lhkviov/png-upscale-1.0_macOS_64bit.jar/file)
 * :electron:	Download the executable corresponding with your operating system, and the Models folder
 * It's possible to download only some of the models if you want (It just wont let you use them inside the program)
 * The Models folder needs to be in the same directory as the Jar/Exe to use them
@@ -24,7 +24,7 @@
 There are four trained models integrated into the program :
 
 ### EDSR 
-##### [Best Quality]+[Slowest]
+##### `[Best Quality]+[Slowest]`
 
 - Size of the model: ~38.5MB x3. This is a quantized version, so that it can be uploaded to GitHub. (Original was 150MB each.)
 - This model was trained for 3 days with a batch size of 16
@@ -38,7 +38,7 @@ There are four trained models integrated into the program :
 > Trained models can be downloaded from [here](https://github.com/Saafke/EDSR_Tensorflow/tree/master/models).
 
 ### ESPCN
-##### [Fast]
+##### `[Fast]`
 
 - Size of the model: ~100kb x3
 - This model was trained for ~100 iterations with a batch size of 32
@@ -52,7 +52,7 @@ There are four trained models integrated into the program :
 > Trained models can be downloaded from [here](https://github.com/fannymonori/TF-ESPCN/tree/master/export).
 
 ### FSRCNN
-##### [Fast]
+##### `[Fast]`
 
 - Size of the model: ~40KB x3
 - This model was trained for ~30 iterations with a batch size of 1
@@ -66,7 +66,7 @@ There are four trained models integrated into the program :
 > Trained models can be downloaded from [here](https://github.com/Saafke/FSRCNN_Tensorflow/tree/master/models).
 
 ### LapSRN
-##### [Has x8]
+##### `[Has x8]`
 
 - Size of the model: between 1-5Mb x3
 - This model was trained for ~50 iterations with a batch size of 32
