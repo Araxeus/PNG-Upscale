@@ -411,7 +411,9 @@ public class MainApp {
             String openPath = loadPath!=null ? loadPath : Config.FIELD01.getString();
 			switch (NativeFileDialog.NFD_SaveDialog("png",openPath, path)) {
 				case NativeFileDialog.NFD_OKAY:
-					savePath = path.getStringUTF8(0)+".png";
+					savePath = path.getStringUTF8(0);
+                    if(!savePath.endsWith(".png"))
+                        savePath+=".png";
 					write("Saving to "+savePath,null);
 					NativeFileDialog.nNFD_Free(path.get(0));
                     saveButton.setIcon(saveOkSVG);
