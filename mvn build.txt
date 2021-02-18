@@ -1,0 +1,9 @@
+mvn -Djavacpp.platform=windows-x86_64 package
+mvn -Djavacpp.platform=linux-x86_64 package
+mvn -Djavacpp.platform=macosx-x86_64 package
+
+linux-armhf
+linux-mips64el
+linux-ppc64le
+linux-x86
+windows-x86
