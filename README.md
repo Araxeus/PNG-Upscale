@@ -1,5 +1,5 @@
 # :fire: PNG Upscale -  AI Super Resolution :fire:
-> `Because Bicubic Interpolation isn't good enough anymore, we are in the Machine Learning Age.`
+> Because Bicubic Interpolation isn't good enough anymore, we are in the Machine Learning Age.
  
  ## [v1.0 is available on MediaFire due to large size](https://app.mediafire.com/nz88rdbl8u041) 
 * MediaFire Folder include full "[Models](http://www.mediafire.com/folder/05txvvxyww7ek/Models)" folder 📁 and executable Files 🖼️ to download
@@ -19,7 +19,7 @@
 
 ## Models
 
-> all of the model download links below are already included in the MediaFire folder.
+>`all of the model download links below are already included in the MediaFire folder.`
 
 There are four trained models integrated into the program :
 
