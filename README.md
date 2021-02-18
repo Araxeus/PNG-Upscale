@@ -11,7 +11,7 @@
  ---
 * ⚠️ Be careful when trying to resize very large pictures, it can take considerable time and resources ⚠️
 * To upscale an image you just need to choose a mode, load a picture and press start
-* Save button <ins>*can*</ins> be used to choose an output folder *before* you start the process
+* Save button <ins>*can*</ins> be used to choose an output folder and filename *before* you start the process (either just name or .png)
 * You can double click the text box to change [Dark <-> Light] theme (disabled when upScaling)
 * Use PNG images for best results
 
