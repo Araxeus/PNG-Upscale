@@ -8,12 +8,12 @@
 * :electron:	Download the executable corresponding with your operating system, and the Models folder
 * It's possible to download only some of the models if you want (It just wont let you use them inside the program)
 * The Models folder needs to be in the same directory as the Jar/Exe to use them
-* This program is best used on PNG images
+ ---
 * ⚠️ Be careful when trying to resize very large pictures, it can take considerable time and resources ⚠️
 * To upscale an image you just need to choose a mode, load a picture and press start
 * Save button <ins>*can*</ins> be used to choose an output folder *before* you start the process
 * You can double click the text box to change [Dark <-> Light] theme (disabled when upScaling)
-
+* Use PNG images for best results
 
 
 ## Models
