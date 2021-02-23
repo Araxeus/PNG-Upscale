@@ -55,13 +55,13 @@
         <dependency>
             <groupId>com.formdev</groupId>
             <artifactId>flatlaf</artifactId>
-            <version>1.0-rc3</version>
+            <version>1.0</version>
         </dependency>
 
         <dependency>
             <groupId>com.formdev</groupId>
             <artifactId>flatlaf-intellij-themes</artifactId>
-            <version>1.0-rc3</version>
+            <version>1.0</version>
         </dependency>
 
         <dependency>
