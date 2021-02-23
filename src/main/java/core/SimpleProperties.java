@@ -139,7 +139,7 @@ public class SimpleProperties {
     // store data to config file
     private void store() {
         try (FileOutputStream outStream = new FileOutputStream(propertiesFilePath)) {
-            properties.storeToXML(outStream, "ScreenshotZ Program parameters");
+            properties.storeToXML(outStream, "PNG Upscale program parameters");
             System.out.println("Stored properties :" + properties.toString());
         } catch (IOException e) {
             System.err.println("IOException");
@@ -158,15 +158,6 @@ public class SimpleProperties {
                 System.err.println("Properties didn't contain " + field.KEY);
             }
         }
-        //check that screenshot dir exit and create if needed
-            try {
-                if (Files.notExists(Paths.get(properties.getProperty(Config.FIELD01.KEY)))) {
-                    System.out.println("Creating screenshot directory");
-                    Files.createDirectories(Paths.get(properties.getProperty(Config.FIELD01.KEY)));
-                }
-            } catch (IOException e) {
-                System.err.println("couldn't create default screenshot dir");
-            }
         return changed;
     }
 
