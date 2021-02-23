@@ -8,11 +8,10 @@ import static org.bytedeco.opencv.global.opencv_imgcodecs.*;
 import java.io.File;
 import javax.swing.ImageIcon;
 
-@SuppressWarnings({"java:S106"})
+@SuppressWarnings({"java:S106","java:S2093"})
 public class Upscale {
-    private Upscale(){};
+    private Upscale(){}
 
-    @SuppressWarnings({"java:S2095","java:S2093"})
     public static boolean run(String loadPath, String savePath) {
         String[] mode = MainApp.getMode();
         MainApp.write("Started Upscale Process ["+mode[0]+"]", null);
