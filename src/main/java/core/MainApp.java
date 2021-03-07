@@ -44,6 +44,7 @@ import java.awt.Dimension;
 import javax.swing.JButton;
 
 import java.awt.Toolkit;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -104,7 +105,7 @@ public class MainApp {
 
     private static MainApp window;
 
-    public String[] getPath() {
+    public String[] getPath () {
         return new String[]{loadPath, savePath};
     }
 
@@ -113,7 +114,7 @@ public class MainApp {
      * 
      * @wbp.parser.entryPoint
      */
-    public static void main(String[] args) {
+    public static void main (String[] args) {
         EventQueue.invokeLater(() -> {
             try {
                 window = new MainApp();
@@ -127,7 +128,7 @@ public class MainApp {
         });
     }
 
-    public MainApp() {
+    public MainApp () {
         JFrame.setDefaultLookAndFeelDecorated(true); //custom window decoration
         setSkin(false);
         UIManager.put("TabbedPane.showTabSeparators", true);
@@ -136,7 +137,7 @@ public class MainApp {
         initialize();
     }
 
-    private void initialize() {
+    private void initialize () {
         frame = new JFrame();
         frame.setIconImage((new ImageIcon(MainApp.class.getClassLoader().getResource("Icon.png")).getImage()));
         frame.setAutoRequestFocus(true);
@@ -162,7 +163,7 @@ public class MainApp {
         console.setMinimumSize(new Dimension(150, 100));
         skinChanger = new MouseAdapter() {
             @Override
-            public void mousePressed(MouseEvent e) {
+            public void mousePressed (MouseEvent e) {
                 if (clickTimer == 0) {
                     clickTimer = System.currentTimeMillis();
                     return;
@@ -376,23 +377,7 @@ public class MainApp {
         loadButton = new JButton("Load", loadSVG);
         loadButton.setVerticalTextPosition(SwingConstants.BOTTOM);
         loadButton.setHorizontalTextPosition(SwingConstants.CENTER);
-        loadButton.addActionListener(e -> {
-            PointerBuffer path = MemoryUtil.memAllocPointer(1);
-			switch (NativeFileDialog.NFD_OpenDialog("png",Config.FIELD01.getString(), path)) {
-				case NativeFileDialog.NFD_OKAY:
-					loadPath = path.getStringUTF8(0);
-                    Config.FIELD01.setValue(new File(loadPath).getParent());
-					write("Loaded "+loadPath,null);
-					NativeFileDialog.nNFD_Free(path.get(0));
-                    loadButton.setIcon(loadOkSVG);
-					break;
-				case NativeFileDialog.NFD_CANCEL:
-					write("Canceled Image Selection",null);
-					break;
-				default: // NFD_ERROR
-					write("Error: %s%n"+NativeFileDialog.NFD_GetError(),SCARLET);
-			}
-        });
+        loadButton.addActionListener(loadListener);
 
         loadPanel.add(loadButton, BorderLayout.CENTER);
 
@@ -406,33 +391,15 @@ public class MainApp {
         saveButton = new JButton("Save", saveSVG);
         saveButton.setVerticalTextPosition(SwingConstants.BOTTOM);
         saveButton.setHorizontalTextPosition(SwingConstants.CENTER);
-        saveButton.addActionListener(e -> {
-            PointerBuffer path = MemoryUtil.memAllocPointer(1);
-            String openPath = loadPath!=null ? loadPath : Config.FIELD01.getString();
-			switch (NativeFileDialog.NFD_SaveDialog("png",openPath, path)) {
-				case NativeFileDialog.NFD_OKAY:
-					savePath = path.getStringUTF8(0);
-                    if(!savePath.endsWith(".png"))
-                        savePath+=".png";
-					write("Saving to "+savePath,null);
-					NativeFileDialog.nNFD_Free(path.get(0));
-                    saveButton.setIcon(saveOkSVG);
-					break;
-				case NativeFileDialog.NFD_CANCEL:
-					write("Canceled Save Location Selection",null);
-					break;
-				default: // NFD_ERROR
-					write("Error: %s%n"+NativeFileDialog.NFD_GetError(),SCARLET);
-            }
-        });
+        saveButton.addActionListener(saveListener);
         savePanel.add(saveButton, BorderLayout.CENTER);
         frame.pack();
         mainSplitPane.setDividerLocation(0.47);
     }
 
-    public void setMode(boolean mode) {
+    public void setMode (boolean mode) {
         enableComponents(upperSplitPane, mode);
-        if(mode) {
+        if (mode) {
             startButton.setIcon(startSVG);
             startButton.setText("Start");
             saveButton.setIcon(saveSVG);
@@ -443,7 +410,7 @@ public class MainApp {
         startButton.setText(null);
         enableComponents(upperSplitPane, false);
         console.removeMouseListener(skinChanger);
-        if(Config.FIELD03.getBoolean()) {
+        if (Config.FIELD03.getBoolean()) {
             startButton.setIcon(blackLoadingGIF);
             startButton.setDisabledIcon(blackLoadingGIF);
         }
@@ -455,7 +422,45 @@ public class MainApp {
 
     private Stopwatch stopwatch;
 
-    public SwingWorker<Boolean, Integer> createWorker() {
+    private ActionListener saveListener = event -> {
+        PointerBuffer path = MemoryUtil.memAllocPointer(1);
+        String openPath = loadPath!=null ? loadPath : Config.FIELD01.getString();
+    	switch (NativeFileDialog.NFD_SaveDialog("png",openPath, path)) {
+    		case NativeFileDialog.NFD_OKAY:
+    			savePath = path.getStringUTF8(0);
+                if (!savePath.endsWith(".png"))
+                    savePath+=".png";
+    			write("Saving to "+savePath,null);
+    			NativeFileDialog.nNFD_Free(path.get(0));
+                saveButton.setIcon(saveOkSVG);
+    			break;
+    		case NativeFileDialog.NFD_CANCEL:
+    			write("Canceled Save Location Selection",null);
+    			break;
+    		default: // NFD_ERROR
+    			write("Error: %s%n"+NativeFileDialog.NFD_GetError(),SCARLET);
+        }
+    };
+    
+    private ActionListener loadListener = event -> {
+        PointerBuffer path = MemoryUtil.memAllocPointer(1);
+    	switch (NativeFileDialog.NFD_OpenDialog("png",Config.FIELD01.getString(), path)) {
+    		case NativeFileDialog.NFD_OKAY:
+    			loadPath = path.getStringUTF8(0);
+                Config.FIELD01.setValue(new File(loadPath).getParent());
+    			write("Loaded "+loadPath,null);
+    			NativeFileDialog.nNFD_Free(path.get(0));
+                loadButton.setIcon(loadOkSVG);
+    			break;
+    		case NativeFileDialog.NFD_CANCEL:
+    			write("Canceled Image Selection",null);
+    			break;
+    		default: // NFD_ERROR
+    			write("Error: %s%n"+NativeFileDialog.NFD_GetError(),SCARLET);
+    	}
+    };
+
+    public SwingWorker<Boolean, Integer> createWorker () {
         return new SwingWorker<Boolean, Integer>() {
             @Override
             protected Boolean doInBackground() throws Exception {
@@ -465,7 +470,7 @@ public class MainApp {
             }       
 
             @Override
-            protected void done() {
+            protected void done () {
                 boolean success = false;
                 try {
                     success = get();
@@ -474,7 +479,7 @@ public class MainApp {
                 }
                 stopwatch.stop();
                 setMode(true);
-                if(success) {
+                if (success) {
                     savePath = null;
                     printStopwatch();
                 }        
@@ -482,30 +487,30 @@ public class MainApp {
         };
     }
 
-    private void printStopwatch() {
+    private void printStopwatch () {
         long minutes = stopwatch.elapsed(TimeUnit.MINUTES);
         long seconds = stopwatch.elapsed(TimeUnit.SECONDS);
         String minutesString = "";
-        if(minutes!=0) {
+        if (minutes!=0) {
             seconds = seconds%60;
             minutesString = minutes+" ";
-            if(minutes>1)
+            if (minutes>1)
                 minutesString+="Minutes";
             else
                 minutesString+="Minute";
         }
         String secondsString="";
-        if(!minutesString.equals(""))
+        if (!minutesString.equals(""))
             secondsString+=", ";
         secondsString+=seconds;
         secondsString += " Second";
-        if(seconds!=1)
+        if (seconds!=1)
             secondsString += "s";
-        if(seconds > 10 || minutes >= 1)
+        if (seconds > 10 || minutes >= 1)
             write("Done In " + minutesString + secondsString,null);
     }
 
-    public static void write(String text, Color color) {
+    public static void write (String text, Color color) {
         StyledDocument doc = window.console.getStyledDocument();
         Style style = window.console.addStyle("Color Style", null);
         if (color == null) {
@@ -525,7 +530,7 @@ public class MainApp {
         }
     }
 
-    public void enableComponents(Container container, boolean enable) {
+    public void enableComponents (Container container, boolean enable) {
         Component[] components = container.getComponents();
         for (Component component : components) {
             component.setEnabled(enable);
@@ -546,16 +551,16 @@ public class MainApp {
     private void setSelected() {
         Enumeration<AbstractButton> buttons = mode.getElements();
         AbstractButton button;
-        while (buttons.hasMoreElements()){
+        while (buttons.hasMoreElements()) {
             button = buttons.nextElement();
-            if(button.getActionCommand().equals(Config.FIELD02.getString()))
+            if (button.getActionCommand().equals(Config.FIELD02.getString()))
                 button.setSelected(true);
         }       
      }
 
-     private void startTabbedPanel(){
+     private void startTabbedPanel () {
          int index;
-         switch(Config.FIELD02.getString().substring(0, 2)) {
+         switch (Config.FIELD02.getString().substring(0, 2)) {
             case "ES": index = 0; break;
             case "ED": index = 1; break;
             case "FS": index = 2; break;
@@ -564,12 +569,12 @@ public class MainApp {
          tabbedPane.setSelectedIndex(index);
      }
 	  	
-	    private void setSkin(boolean next) {
+	    private void setSkin (boolean next) {
             
-	        if(next)
+	        if (next)
                 Config.FIELD03.setValue(!Config.FIELD03.getBoolean());
 
-	        if(Config.FIELD03.getBoolean()) {
+	        if (Config.FIELD03.getBoolean()) {
                 com.formdev.flatlaf.intellijthemes.FlatGruvboxDarkHardIJTheme.install();
                 UIManager.put("TabbedPane.selectedBackground", DARK);
             }
@@ -578,7 +583,8 @@ public class MainApp {
                 UIManager.put("TabbedPane.selectedBackground", LIGHT);
             }
 
-	        if(next)SwingUtilities.updateComponentTreeUI(frame); 
+	        if (next)
+                SwingUtilities.updateComponentTreeUI(frame); 
 	    }
 	
 }
