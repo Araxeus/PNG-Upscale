@@ -16,7 +16,7 @@
 * Save button <ins>*can*</ins> be used to choose an output folder and filename *before* you start the process (either just name or .png)
 * You can double click the text box to change [Dark <-> Light] theme (disabled when upScaling)
 * Use PNG images for best results
-
+* if faced with a JNI Error see this issue for a possible fix https://github.com/Araxeus/PNG-Upscale/issues/33
  ---
 
 ## Models
