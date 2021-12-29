@@ -1,69 +1,55 @@
 package core;
 
-import java.awt.EventQueue;
-
-import javax.swing.JFrame;
-import javax.swing.JTabbedPane;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Container;
-
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Style;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyledDocument;
-
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import com.google.common.base.Stopwatch;
-
+import static core.Utils.SCARLET;
+import static core.Utils.write;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.EventQueue;
+import java.awt.Toolkit;
+import java.io.File;
+import java.net.URL;
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.concurrent.ExecutionException;
+import javax.swing.AbstractButton;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.SwingWorker;
+import javax.swing.UIManager;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.system.MemoryUtil;
 import org.lwjgl.util.nfd.NativeFileDialog;
+import static org.lwjgl.util.nfd.NativeFileDialog.NFD_PathSet_Free;
+import static org.lwjgl.util.nfd.NativeFileDialog.NFD_PathSet_GetCount;
+import static org.lwjgl.util.nfd.NativeFileDialog.NFD_PathSet_GetPath;
+import org.lwjgl.util.nfd.NFDPathSet;
 
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 
-import javax.swing.AbstractButton;
-import javax.swing.BoxLayout;
-import javax.swing.ButtonGroup;
-import javax.swing.JSplitPane;
-import java.awt.BorderLayout;
-import javax.swing.JTextPane;
-import javax.swing.JRadioButton;
-import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
-import javax.swing.SwingWorker;
-import javax.swing.UIManager;
-import javax.swing.WindowConstants;
-import javax.swing.JSeparator;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
+public class MainApp extends javax.swing.JFrame {
 
-import java.awt.Dimension;
+    public static MainApp window;
+    private String savePath;
+    private final ArrayList<String> loadPaths = new ArrayList<>();
+    private FlatSVGIcon startSVG, loadSVG, loadOkSVG, saveSVG, saveOkSVG;
+    private Icon whiteLoadingGIF, blackLoadingGIF;
 
-import javax.swing.JButton;
-
-import java.awt.Toolkit;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.io.File;
-import java.util.Enumeration;
-import java.util.concurrent.TimeUnit;
-
-public class MainApp {
-    //[0]=Button Name, [1]=Algorithm, [2]=Scale
     private static final String ES = "espcn",
-                                ED = "edsr",
-                                FS = "fsrcnn",
-                                LA = "lapsrn";
-    private static final String[][] MODES = { 
+            ED = "edsr",
+            FS = "fsrcnn",
+            LA = "lapsrn";
+
+    private static final String[][] MODES = {
         {"ESPCNx2", ES, "2"}, // 0
         {"ESPCNx3", ES, "3"}, // 1
         {"ESPCNx4", ES, "4"}, // 2
         {"EDSRx2", ED, "2"}, // 3
-        {"EDSRx3", ED,  "3"}, // 4
-        {"EDSRx4", ED,  "4"}, // 5
+        {"EDSRx3", ED, "3"}, // 4
+        {"EDSRx4", ED, "4"}, // 5
         {"FSRCNNx2", FS, "2"}, // 6
         {"FSRCNNx3", FS, "3"}, // 7
         {"FSRCNNx4", FS, "4"}, // 8
@@ -71,466 +57,444 @@ public class MainApp {
         {"LapSRNx4", LA, "4"}, // 10
         {"LapSRNx8", LA, "8"} // 11
     };
-    public static final Color SVGBLUE = new Color(115, 208, 244),
-	                          SCARLET = new Color(255, 36, 0),
-                              LIGHT = new Color(194,236,255),
-                              DARK = new Color(17,19,19);
-    private JFrame frame;
-    private JSplitPane upperSplitPane;
-    private JTextPane console;
-    private JTabbedPane tabbedPane;
-
-    private ButtonGroup mode;
-
-    private JButton startButton,
-                    loadButton,
-                    saveButton;
-    private JRadioButton btnLapSRNx8;
-    private final Icon whiteLoadingGIF, 
-                       blackLoadingGIF;
-    
-    private FlatSVGIcon startSVG,
-                        loadSVG,
-                        loadOkSVG,
-                        saveSVG,
-                        saveOkSVG;
-
-    private MouseAdapter skinChanger;
-
-    private String loadPath,
-                   savePath;
-
-    private long clickTimer = 0;
 
 
-    private static MainApp window;
+    public MainApp() {
+        uiCode();
+        initComponents();
+        uiActions();
+        redrawCounter();
+    }
 
-    public String[] getPath () {
-        return new String[]{loadPath, savePath};
+    public static void main(String[] args) {
+        EventQueue.invokeLater(() -> {
+            try {
+                java.awt.EventQueue.invokeLater(() -> {
+                    window = new MainApp();
+                    window.setVisible(true);
+                    Utils.attach(window);
+                });
+            } catch (Exception e) {
+            }
+        });
+    }
+
+    private void uiCode() {
+        JFrame.setDefaultLookAndFeelDecorated(true); //custom window decoration
+        UIManager.put("TabbedPane.showTabSeparators", true);
+        URL _url = MainApp.class.getClassLoader().getResource("loadingWHITE.gif");
+        URL _url2 = MainApp.class.getClassLoader().getResource("loadingBLACK.gif");
+        if (_url != null) {
+            whiteLoadingGIF = new ImageIcon(_url);
+        }
+        if (_url2 != null) {
+            blackLoadingGIF = new ImageIcon(_url2);
+        }
+        Utils.setSkin(false);
+        URL _url3 = MainApp.class.getClassLoader().getResource("Icon.png");
+        if (_url3 != null) {
+            setIconImage((new ImageIcon(_url3).getImage()));
+        }
+        setTitle("PNG Upscaler v1.0.1");
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        setLocation((screenSize.width - getBounds().width) / 2,
+                (screenSize.height - getBounds().height) / 2);
+        startSVG = new FlatSVGIcon("start.svg", 36, 36, ClassLoader.getSystemClassLoader());
+        loadSVG = new FlatSVGIcon("load.svg", 36, 36, ClassLoader.getSystemClassLoader());
+        loadOkSVG = new FlatSVGIcon("loadOK.svg", 36, 36, ClassLoader.getSystemClassLoader());
+        saveOkSVG = new FlatSVGIcon("saveOK.svg", 36, 36, ClassLoader.getSystemClassLoader());
+        saveSVG = new FlatSVGIcon("save.svg", 36, 36, ClassLoader.getSystemClassLoader());
     }
 
     /**
-     * Launch the application.
-     * 
-     * @wbp.parser.entryPoint
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
      */
-    public static void main (String[] args) {
-        EventQueue.invokeLater(() -> {
-            try {
-                window = new MainApp();
-                window.setSelected();
-                window.startTabbedPanel();
-                window.frame.setVisible(true);
-                window.console.grabFocus();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
-    }
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">                          
+    private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
-    public MainApp () {
-        JFrame.setDefaultLookAndFeelDecorated(true); //custom window decoration
-        setSkin(false);
-        UIManager.put("TabbedPane.showTabSeparators", true);
-        whiteLoadingGIF = new ImageIcon(MainApp.class.getClassLoader().getResource("loadingWHITE.gif"));
-        blackLoadingGIF = new ImageIcon(MainApp.class.getClassLoader().getResource("loadingBLACK.gif"));
-        initialize();
-    }
+        mode = new javax.swing.ButtonGroup();
+        mainSplitPane = new javax.swing.JSplitPane();
+        upperSplitPanel = new javax.swing.JSplitPane();
+        jPanel1 = new javax.swing.JPanel();
+        button_start = new javax.swing.JButton();
+        button_import = new javax.swing.JButton();
+        button_export_folder = new javax.swing.JButton();
+        tabbedPane = new javax.swing.JTabbedPane();
+        ESPCNpanel = new javax.swing.JPanel();
+        jSeparator1 = new javax.swing.JSeparator();
+        btnESPCNx2 = new javax.swing.JRadioButton();
+        jSeparator2 = new javax.swing.JSeparator();
+        btnESPCNx3 = new javax.swing.JRadioButton();
+        jSeparator3 = new javax.swing.JSeparator();
+        btnESPCNx4 = new javax.swing.JRadioButton();
+        jSeparator4 = new javax.swing.JSeparator();
+        EDSRpanel = new javax.swing.JPanel();
+        jSeparator5 = new javax.swing.JSeparator();
+        btnESPCNx5 = new javax.swing.JRadioButton();
+        jSeparator6 = new javax.swing.JSeparator();
+        btnESPCNx6 = new javax.swing.JRadioButton();
+        jSeparator7 = new javax.swing.JSeparator();
+        btnESPCNx7 = new javax.swing.JRadioButton();
+        jSeparator8 = new javax.swing.JSeparator();
+        FSRCNNpanel = new javax.swing.JPanel();
+        jSeparator9 = new javax.swing.JSeparator();
+        btnESPCNx8 = new javax.swing.JRadioButton();
+        jSeparator10 = new javax.swing.JSeparator();
+        btnESPCNx9 = new javax.swing.JRadioButton();
+        jSeparator11 = new javax.swing.JSeparator();
+        btnESPCNx10 = new javax.swing.JRadioButton();
+        jSeparator12 = new javax.swing.JSeparator();
+        LapSRNpanel = new javax.swing.JPanel();
+        jSeparator13 = new javax.swing.JSeparator();
+        btnESPCNx11 = new javax.swing.JRadioButton();
+        jSeparator14 = new javax.swing.JSeparator();
+        btnESPCNx12 = new javax.swing.JRadioButton();
+        jSeparator15 = new javax.swing.JSeparator();
+        btnESPCNx13 = new javax.swing.JRadioButton();
+        jSeparator16 = new javax.swing.JSeparator();
+        jPanel3 = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        console = new javax.swing.JTextPane();
+        jPanel2 = new javax.swing.JPanel();
+        item_counter = new javax.swing.JTextPane();
+        button_remove_items = new javax.swing.JButton();
+        button_change_theme = new javax.swing.JButton();
 
-    private void initialize () {
-        frame = new JFrame();
-        frame.setIconImage((new ImageIcon(MainApp.class.getClassLoader().getResource("Icon.png")).getImage()));
-        frame.setAutoRequestFocus(true);
-        frame.setMinimumSize(new Dimension(500, 180));
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        frame.getContentPane().setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.X_AXIS));
-        //set default appearance to middle of the screen
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        frame.setLocation((screenSize.width - frame.getBounds().width) / 2,
-            (screenSize.height - frame.getBounds().height) / 2);
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setMinimumSize(new java.awt.Dimension(500, 180));
+        setPreferredSize(new java.awt.Dimension(640, 480));
+        getContentPane().setLayout(new javax.swing.BoxLayout(getContentPane(), javax.swing.BoxLayout.X_AXIS));
 
-        mode = new ButtonGroup();
+        mainSplitPane.setDividerLocation(90);
+        mainSplitPane.setDividerSize(4);
+        mainSplitPane.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
+        mainSplitPane.setMinimumSize(new java.awt.Dimension(315, 75));
 
-        JSplitPane mainSplitPane = new JSplitPane();
-        mainSplitPane.setEnabled(true);
-        mainSplitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
-        mainSplitPane.setResizeWeight(0.55);
+        upperSplitPanel.setDividerLocation(300);
 
-        frame.getContentPane().add(mainSplitPane);
-        //console
-        console = new JTextPane();
-        console.setEditable(false);
-        console.setMinimumSize(new Dimension(150, 100));
-        skinChanger = new MouseAdapter() {
-            @Override
-            public void mousePressed (MouseEvent e) {
-                if (clickTimer == 0) {
-                    clickTimer = System.currentTimeMillis();
-                    return;
-                }
-                if (System.currentTimeMillis() - clickTimer < 600)
-                    SwingUtilities.invokeLater(() -> setSkin(true));
+        jPanel1.setLayout(new java.awt.GridLayout());
 
-                clickTimer = 0;
-            }
-        };
-        console.addMouseListener(skinChanger);
+        button_start.setIcon(startSVG);
+        button_start.setText("Start");
+        button_start.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        button_start.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jPanel1.add(button_start);
 
-        JScrollPane scrollPane = new JScrollPane(console);
-        scrollPane.setMinimumSize(new Dimension(150, 100));
-        mainSplitPane.setRightComponent(scrollPane);
+        button_import.setIcon(loadSVG);
+        button_import.setText("Import Files");
+        button_import.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        button_import.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jPanel1.add(button_import);
 
-        upperSplitPane = new JSplitPane();
-        upperSplitPane.setMinimumSize(new Dimension(400, 90));
-        upperSplitPane.setEnabled(false);
-        upperSplitPane.setResizeWeight(1.0);
-        mainSplitPane.setLeftComponent(upperSplitPane);
+        button_export_folder.setIcon(startSVG);
+        button_export_folder.setText("Export Folder");
+        button_export_folder.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        button_export_folder.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jPanel1.add(button_export_folder);
 
-        JSplitPane leftSplitPane = new JSplitPane();
-        mainSplitPane.setMinimumSize(new Dimension(315, 75));
-        leftSplitPane.setEnabled(false);
-        leftSplitPane.setResizeWeight(0.7);
-        upperSplitPane.setLeftComponent(leftSplitPane);
+        upperSplitPanel.setRightComponent(jPanel1);
 
-        tabbedPane = new JTabbedPane(SwingConstants.TOP);
-        tabbedPane.setMinimumSize(new Dimension(255, 75));
-        leftSplitPane.setLeftComponent(tabbedPane);
+        tabbedPane.setMinimumSize(new java.awt.Dimension(255, 75));
 
-        JPanel ESPCNpanel = new JPanel();
-        tabbedPane.addTab("ESPCN", null, ESPCNpanel, null);
-        ESPCNpanel.setLayout(new BoxLayout(ESPCNpanel, BoxLayout.X_AXIS));
+        ESPCNpanel.setToolTipText("");
+        ESPCNpanel.setLayout(new javax.swing.BoxLayout(ESPCNpanel, javax.swing.BoxLayout.X_AXIS));
+        ESPCNpanel.add(jSeparator1);
 
-        JSeparator separator = new JSeparator();
-        ESPCNpanel.add(separator);
-
-        JRadioButton btnESPCNx2 = new JRadioButton("x2");
-        btnESPCNx2.setActionCommand(MODES[0][0]);
         mode.add(btnESPCNx2);
-        btnESPCNx2.setToolTipText("x2");
+        btnESPCNx2.setText("x2");
+        btnESPCNx2.setToolTipText("Upscale the image x2");
+        btnESPCNx2.setActionCommand(MODES[0][0]);
+        btnESPCNx2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         ESPCNpanel.add(btnESPCNx2);
-        btnESPCNx2.setHorizontalAlignment(SwingConstants.CENTER);
+        ESPCNpanel.add(jSeparator2);
 
-        JSeparator s1 = new JSeparator();
-        ESPCNpanel.add(s1);
-
-        JRadioButton btnESPCNx3 = new JRadioButton("x3");
-        btnESPCNx3.setActionCommand(MODES[1][0]);
         mode.add(btnESPCNx3);
-        btnESPCNx3.setToolTipText("x3");
+        btnESPCNx3.setText("x3");
+        btnESPCNx3.setToolTipText("Upscale the image x3");
+        btnESPCNx3.setActionCommand(MODES[1][0]);
+        btnESPCNx3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         ESPCNpanel.add(btnESPCNx3);
-        btnESPCNx3.setHorizontalAlignment(SwingConstants.CENTER);
+        ESPCNpanel.add(jSeparator3);
 
-        JSeparator s2 = new JSeparator();
-        ESPCNpanel.add(s2);
-
-        JRadioButton btnESPCNx4 = new JRadioButton("x4");
-        btnESPCNx4.setActionCommand(MODES[2][0]);
         mode.add(btnESPCNx4);
-        btnESPCNx4.setToolTipText("x4");
+        btnESPCNx4.setText("x4");
+        btnESPCNx4.setToolTipText("Upscale the image x4");
+        btnESPCNx4.setActionCommand(MODES[2][0]);
+        btnESPCNx4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         ESPCNpanel.add(btnESPCNx4);
-        btnESPCNx4.setHorizontalAlignment(SwingConstants.CENTER);
+        ESPCNpanel.add(jSeparator4);
 
-        JSeparator s3 = new JSeparator();
-        ESPCNpanel.add(s3);
+        tabbedPane.addTab("ESPCN", ESPCNpanel);
 
-        JPanel EDSRpanel = new JPanel();
-        tabbedPane.addTab("EDSR", null, EDSRpanel, null);
-        EDSRpanel.setLayout(new BoxLayout(EDSRpanel, BoxLayout.X_AXIS));
+        EDSRpanel.setToolTipText("");
+        EDSRpanel.setLayout(new javax.swing.BoxLayout(EDSRpanel, javax.swing.BoxLayout.X_AXIS));
+        EDSRpanel.add(jSeparator5);
 
-        JSeparator s4 = new JSeparator();
-        EDSRpanel.add(s4);
+        mode.add(btnESPCNx5);
+        btnESPCNx5.setText("x2");
+        btnESPCNx5.setToolTipText("Upscale the image x2");
+        btnESPCNx5.setActionCommand(MODES[3][0]);
+        btnESPCNx5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        EDSRpanel.add(btnESPCNx5);
+        EDSRpanel.add(jSeparator6);
 
-        JRadioButton btnEDSRx2 = new JRadioButton("x2");
-        btnEDSRx2.setActionCommand(MODES[3][0]);
-        mode.add(btnEDSRx2);
-        btnEDSRx2.setToolTipText("x2");
-        btnEDSRx2.setHorizontalAlignment(SwingConstants.CENTER);
-        EDSRpanel.add(btnEDSRx2);
+        mode.add(btnESPCNx6);
+        btnESPCNx6.setText("x3");
+        btnESPCNx6.setToolTipText("Upscale the image x3");
+        btnESPCNx6.setActionCommand(MODES[4][0]);
+        btnESPCNx6.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        EDSRpanel.add(btnESPCNx6);
+        EDSRpanel.add(jSeparator7);
 
-        JSeparator s5 = new JSeparator();
-        EDSRpanel.add(s5);
+        mode.add(btnESPCNx7);
+        btnESPCNx7.setText("x4");
+        btnESPCNx7.setToolTipText("Upscale the image x4");
+        btnESPCNx7.setActionCommand(MODES[5][0]);
+        btnESPCNx7.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        EDSRpanel.add(btnESPCNx7);
+        EDSRpanel.add(jSeparator8);
 
-        JRadioButton btnEDSRx3 = new JRadioButton("x3");
-        btnEDSRx3.setActionCommand(MODES[4][0]);
-        mode.add(btnEDSRx3);
-        btnEDSRx3.setToolTipText("x3");
-        btnEDSRx3.setHorizontalAlignment(SwingConstants.CENTER);
-        EDSRpanel.add(btnEDSRx3);
+        tabbedPane.addTab("EDSR", EDSRpanel);
 
-        JSeparator s6 = new JSeparator();
-        EDSRpanel.add(s6);
+        FSRCNNpanel.setToolTipText("");
+        FSRCNNpanel.setLayout(new javax.swing.BoxLayout(FSRCNNpanel, javax.swing.BoxLayout.X_AXIS));
+        FSRCNNpanel.add(jSeparator9);
 
-        JRadioButton btnEDSRx4 = new JRadioButton("x4");
-        btnEDSRx4.setActionCommand(MODES[5][0]);
-        mode.add(btnEDSRx4);
-        btnEDSRx4.setToolTipText("x4");
-        btnEDSRx4.setHorizontalAlignment(SwingConstants.CENTER);
-        EDSRpanel.add(btnEDSRx4);
+        mode.add(btnESPCNx8);
+        btnESPCNx8.setText("x2");
+        btnESPCNx8.setToolTipText("Upscale the image x2");
+        btnESPCNx8.setActionCommand(MODES[6][0]);
+        btnESPCNx8.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        FSRCNNpanel.add(btnESPCNx8);
+        FSRCNNpanel.add(jSeparator10);
 
-        JSeparator s7 = new JSeparator();
-        EDSRpanel.add(s7);
+        mode.add(btnESPCNx9);
+        btnESPCNx9.setText("x3");
+        btnESPCNx9.setToolTipText("Upscale the image x3");
+        btnESPCNx9.setActionCommand(MODES[7][0]);
+        btnESPCNx9.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        FSRCNNpanel.add(btnESPCNx9);
+        FSRCNNpanel.add(jSeparator11);
 
-        JPanel FSRCNNpanel = new JPanel();
-        tabbedPane.addTab("FSRCNN", null, FSRCNNpanel, null);
-        FSRCNNpanel.setLayout(new BoxLayout(FSRCNNpanel, BoxLayout.X_AXIS));
+        mode.add(btnESPCNx10);
+        btnESPCNx10.setText("x4");
+        btnESPCNx10.setToolTipText("Upscale the image x4");
+        btnESPCNx10.setActionCommand(MODES[8][0]);
+        btnESPCNx10.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        FSRCNNpanel.add(btnESPCNx10);
+        FSRCNNpanel.add(jSeparator12);
 
-        JSeparator s8 = new JSeparator();
-        FSRCNNpanel.add(s8);
+        tabbedPane.addTab("FSRCNN", FSRCNNpanel);
 
-        JRadioButton btnFSRCNNx2 = new JRadioButton("x2");
-        btnFSRCNNx2.setActionCommand(MODES[6][0]);
-        mode.add(btnFSRCNNx2);
-        btnFSRCNNx2.setToolTipText("x2");
-        btnFSRCNNx2.setHorizontalAlignment(SwingConstants.CENTER);
-        FSRCNNpanel.add(btnFSRCNNx2);
+        LapSRNpanel.setToolTipText("");
+        LapSRNpanel.setLayout(new javax.swing.BoxLayout(LapSRNpanel, javax.swing.BoxLayout.X_AXIS));
+        LapSRNpanel.add(jSeparator13);
 
-        JSeparator s9 = new JSeparator();
-        FSRCNNpanel.add(s9);
+        mode.add(btnESPCNx11);
+        btnESPCNx11.setText("x2");
+        btnESPCNx11.setToolTipText("Upscale the image x2");
+        btnESPCNx11.setActionCommand(MODES[9][0]);
+        btnESPCNx11.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        LapSRNpanel.add(btnESPCNx11);
+        LapSRNpanel.add(jSeparator14);
 
-        JRadioButton btnFSRCNNx3 = new JRadioButton("x3");
-        btnFSRCNNx3.setActionCommand(MODES[7][0]);
-        mode.add(btnFSRCNNx3);
-        btnFSRCNNx3.setToolTipText("x3");
-        btnFSRCNNx3.setHorizontalAlignment(SwingConstants.CENTER);
-        FSRCNNpanel.add(btnFSRCNNx3);
+        mode.add(btnESPCNx12);
+        btnESPCNx12.setText("x3");
+        btnESPCNx12.setToolTipText("Upscale the image x3");
+        btnESPCNx12.setActionCommand(MODES[10][0]);
+        btnESPCNx12.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        LapSRNpanel.add(btnESPCNx12);
+        LapSRNpanel.add(jSeparator15);
 
-        JSeparator s10 = new JSeparator();
-        FSRCNNpanel.add(s10);
+        mode.add(btnESPCNx13);
+        btnESPCNx13.setText("x4");
+        btnESPCNx13.setToolTipText("Upscale the image x4");
+        btnESPCNx13.setActionCommand(MODES[11][0]);
+        btnESPCNx13.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        LapSRNpanel.add(btnESPCNx13);
+        LapSRNpanel.add(jSeparator16);
 
-        JRadioButton btnFSRCNNx4 = new JRadioButton("x4");
-        btnFSRCNNx4.setActionCommand(MODES[8][0]);
-        mode.add(btnFSRCNNx4);
-        btnFSRCNNx4.setVerticalAlignment(SwingConstants.TOP);
-        btnFSRCNNx4.setToolTipText("x4");
-        btnFSRCNNx4.setHorizontalAlignment(SwingConstants.CENTER);
-        FSRCNNpanel.add(btnFSRCNNx4);
+        tabbedPane.addTab("LapSRN", LapSRNpanel);
 
-        JSeparator s11 = new JSeparator();
-        FSRCNNpanel.add(s11);
+        upperSplitPanel.setLeftComponent(tabbedPane);
 
-        JPanel LapSRNpanel = new JPanel();
-        tabbedPane.addTab("LapSRN", null, LapSRNpanel, null);
-        LapSRNpanel.setLayout(new BoxLayout(LapSRNpanel, BoxLayout.X_AXIS));
+        mainSplitPane.setTopComponent(upperSplitPanel);
 
-        JSeparator s12 = new JSeparator();
-        LapSRNpanel.add(s12);
+        jPanel3.setLayout(new java.awt.BorderLayout());
 
-        JRadioButton btnLapSRNx2 = new JRadioButton("x2");
-        btnLapSRNx2.setActionCommand(MODES[9][0]);
-        mode.add(btnLapSRNx2);
-        btnLapSRNx2.setToolTipText("x2");
-        btnLapSRNx2.setHorizontalAlignment(SwingConstants.CENTER);
-        LapSRNpanel.add(btnLapSRNx2);
+        jScrollPane1.setMinimumSize(new java.awt.Dimension(1, 1));
 
-        JSeparator s13 = new JSeparator();
-        LapSRNpanel.add(s13);
+        console.setEditable(false);
+        console.setMinimumSize(new java.awt.Dimension(150, 100));
+        jScrollPane1.setViewportView(console);
 
-        JRadioButton btnLapSRNx4 = new JRadioButton("x4");
-        btnLapSRNx4.setActionCommand(MODES[10][0]);
-        mode.add(btnLapSRNx4);
-        btnLapSRNx4.setToolTipText("x4");
-        btnLapSRNx4.setHorizontalAlignment(SwingConstants.CENTER);
-        LapSRNpanel.add(btnLapSRNx4);
+        jPanel3.add(jScrollPane1, java.awt.BorderLayout.CENTER);
 
-        JSeparator s14 = new JSeparator();
-        LapSRNpanel.add(s14);
+        jPanel2.setMinimumSize(new java.awt.Dimension(0, 0));
+        jPanel2.setPreferredSize(new java.awt.Dimension(10, 20));
+        jPanel2.setLayout(new java.awt.GridBagLayout());
 
-        btnLapSRNx8 = new JRadioButton("x8");
-        btnLapSRNx8.setActionCommand(MODES[11][0]);
-        mode.add(btnLapSRNx8);
-        btnLapSRNx8.setVerticalAlignment(SwingConstants.TOP);
-        btnLapSRNx8.setToolTipText("x8");
-        btnLapSRNx8.setHorizontalAlignment(SwingConstants.CENTER);
-        LapSRNpanel.add(btnLapSRNx8);
+        item_counter.setEnabled(false);
+        item_counter.setMinimumSize(new java.awt.Dimension(200, 20));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        jPanel2.add(item_counter, gridBagConstraints);
 
-        JSeparator s15 = new JSeparator();
-        LapSRNpanel.add(s15);
+        button_remove_items.setLabel("Remove all items");
+        button_remove_items.setMinimumSize(new java.awt.Dimension(160, 20));
+        jPanel2.add(button_remove_items, new java.awt.GridBagConstraints());
 
-        JPanel startPanel = new JPanel();
-        startPanel.setMinimumSize(new Dimension(70, 75));
-        leftSplitPane.setRightComponent(startPanel);
-        startPanel.setLayout(new BorderLayout(0, 0));
-        startSVG = new FlatSVGIcon("start.svg", 36, 36, ClassLoader.getSystemClassLoader());
-        startButton = new JButton("Start", startSVG);
-        startButton.setVerticalTextPosition(SwingConstants.BOTTOM);
-        startButton.setHorizontalTextPosition(SwingConstants.CENTER);
-        startButton.addActionListener(e -> {
-            if (loadPath != null) 
+        button_change_theme.setLabel("Theme");
+        button_change_theme.setMinimumSize(new java.awt.Dimension(100, 20));
+        jPanel2.add(button_change_theme, new java.awt.GridBagConstraints());
+
+        jPanel3.add(jPanel2, java.awt.BorderLayout.PAGE_END);
+
+        mainSplitPane.setRightComponent(jPanel3);
+
+        getContentPane().add(mainSplitPane);
+
+        pack();
+    }// </editor-fold>                        
+
+    private void uiActions() {
+        button_start.addActionListener(e -> {
+            if (!loadPaths.isEmpty()) {
                 createWorker().execute();
-            else
-                write("Load File First !", SCARLET);
+            } else {
+                write("No images are in queue, add some by clicking 'Import Files'", SCARLET);
+            }
         });
-        startPanel.add(startButton, BorderLayout.CENTER);
+        button_import.addActionListener((e) -> {
+            NFDPathSet pathSet = NFDPathSet.calloc();
+            switch (NativeFileDialog.NFD_OpenDialogMultiple("png", null, pathSet)) {
+                case NativeFileDialog.NFD_OKAY -> {
+                    long count = NFD_PathSet_GetCount(pathSet);
+                    for (long i = 0; i < count; i++) {
+                        String path = NFD_PathSet_GetPath(pathSet, i);
+                        loadPaths.add(path);
+                        write("Added file: " + path, null);
+                    }
+                    NFD_PathSet_Free(pathSet);
+                    button_import.setIcon(loadOkSVG);
+                    redrawCounter();
+                }
+                case NativeFileDialog.NFD_CANCEL -> write("Canceled Image Selection", null);
+                default -> // NFD_ERROR
+                    write("Error: %s%n" + NativeFileDialog.NFD_GetError(), SCARLET);
+            }
+        });
+        button_export_folder.addActionListener((e) -> {
+            PointerBuffer path = MemoryUtil.memAllocPointer(1);
+            switch (NativeFileDialog.NFD_PickFolder((ByteBuffer) null, path)) {
+                case NativeFileDialog.NFD_OKAY -> {
+                    savePath = path.getStringUTF8(0);
+                    write("Export Folder set to:" + savePath, null);
+                    MemoryUtil.memFree(path);
+                    button_export_folder.setIcon(saveOkSVG);
+                }
+                case NativeFileDialog.NFD_CANCEL -> write("Canceled Save Location Selection", null);
+                default -> // NFD_ERROR
+                    write("Error: %s%n" + NativeFileDialog.NFD_GetError(), SCARLET);
+            }
+        });
+        
+        button_remove_items.addActionListener((e) -> {
+            loadPaths.clear();
+            redrawCounter();
+            Utils.write("All items in queue have been removed!", null);
+        });
+        
+        button_change_theme.addActionListener((e) -> {
+           Utils.setSkin(true);
+        });
 
-        JSplitPane rightSplitPane = new JSplitPane();
-        rightSplitPane.setMinimumSize(new Dimension(120, 75));
-        rightSplitPane.setResizeWeight(0.5);
-        upperSplitPane.setRightComponent(rightSplitPane);
-
-        JPanel loadPanel = new JPanel();
-        rightSplitPane.setLeftComponent(loadPanel);
-        loadPanel.setLayout(new BorderLayout(0, 0));
-        loadPanel.setMinimumSize(new Dimension(60, 75));
-
-        loadSVG = new FlatSVGIcon("load.svg", 36, 36, ClassLoader.getSystemClassLoader());
-        loadOkSVG = new FlatSVGIcon("loadOK.svg", 36, 36, ClassLoader.getSystemClassLoader());
-        loadButton = new JButton("Load", loadSVG);
-        loadButton.setVerticalTextPosition(SwingConstants.BOTTOM);
-        loadButton.setHorizontalTextPosition(SwingConstants.CENTER);
-        loadButton.addActionListener(loadListener);
-
-        loadPanel.add(loadButton, BorderLayout.CENTER);
-
-        JPanel savePanel = new JPanel();
-        rightSplitPane.setRightComponent(savePanel);
-        savePanel.setLayout(new BorderLayout(0, 0));
-        savePanel.setMinimumSize(new Dimension(60, 75));
-
-        saveOkSVG = new FlatSVGIcon("saveOK.svg", 36, 36, ClassLoader.getSystemClassLoader());
-        saveSVG = new FlatSVGIcon("save.svg", 36, 36, ClassLoader.getSystemClassLoader());
-        saveButton = new JButton("Save", saveSVG);
-        saveButton.setVerticalTextPosition(SwingConstants.BOTTOM);
-        saveButton.setHorizontalTextPosition(SwingConstants.CENTER);
-        saveButton.addActionListener(saveListener);
-        savePanel.add(saveButton, BorderLayout.CENTER);
-        frame.pack();
-        mainSplitPane.setDividerLocation(0.47);
+        setSelected();
+        startTabbedPanel();
     }
 
-    public void setMode (boolean mode) {
-        enableComponents(upperSplitPane, mode);
-        if (mode) {
-            startButton.setIcon(startSVG);
-            startButton.setText("Start");
-            saveButton.setIcon(saveSVG);
-            loadButton.setIcon(loadSVG);
-            console.addMouseListener(skinChanger);
-            return;
-        }
-        startButton.setText(null);
-        enableComponents(upperSplitPane, false);
-        console.removeMouseListener(skinChanger);
-        if (Config.FIELD03.getBoolean()) {
-            startButton.setIcon(blackLoadingGIF);
-            startButton.setDisabledIcon(blackLoadingGIF);
-        }
-        else {
-            startButton.setIcon(whiteLoadingGIF);
-            startButton.setDisabledIcon(whiteLoadingGIF);
+    private void setSelected() {
+        Enumeration<AbstractButton> buttons = mode.getElements();
+        AbstractButton button;
+        while (buttons.hasMoreElements()) {
+            button = buttons.nextElement();
+            if (button.getActionCommand().equals(Config.FIELD02.getString())) {
+                button.setSelected(true);
+            }
         }
     }
 
-    private Stopwatch stopwatch;
+    private void startTabbedPanel() {
+        int index;
+        index = switch (Config.FIELD02.getString().substring(0, 2)) {
+            case "ES" -> 0;
+            case "ED" -> 1;
+            case "FS" -> 2;
+            default -> 3;
+        };
+        tabbedPane.setSelectedIndex(index);
+    }
 
-    private ActionListener saveListener = event -> {
-        PointerBuffer path = MemoryUtil.memAllocPointer(1);
-        String openPath = loadPath!=null ? loadPath : Config.FIELD01.getString();
-    	switch (NativeFileDialog.NFD_SaveDialog("png",openPath, path)) {
-    		case NativeFileDialog.NFD_OKAY:
-    			savePath = path.getStringUTF8(0);
-                if (!savePath.endsWith(".png"))
-                    savePath+=".png";
-    			write("Saving to "+savePath,null);
-    			NativeFileDialog.nNFD_Free(path.get(0));
-                saveButton.setIcon(saveOkSVG);
-    			break;
-    		case NativeFileDialog.NFD_CANCEL:
-    			write("Canceled Save Location Selection",null);
-    			break;
-    		default: // NFD_ERROR
-    			write("Error: %s%n"+NativeFileDialog.NFD_GetError(),SCARLET);
-        }
-    };
-    
-    private ActionListener loadListener = event -> {
-        PointerBuffer path = MemoryUtil.memAllocPointer(1);
-    	switch (NativeFileDialog.NFD_OpenDialog("png",Config.FIELD01.getString(), path)) {
-    		case NativeFileDialog.NFD_OKAY:
-    			loadPath = path.getStringUTF8(0);
-                Config.FIELD01.setValue(new File(loadPath).getParent());
-    			write("Loaded "+loadPath,null);
-    			NativeFileDialog.nNFD_Free(path.get(0));
-                loadButton.setIcon(loadOkSVG);
-    			break;
-    		case NativeFileDialog.NFD_CANCEL:
-    			write("Canceled Image Selection",null);
-    			break;
-    		default: // NFD_ERROR
-    			write("Error: %s%n"+NativeFileDialog.NFD_GetError(),SCARLET);
-    	}
-    };
-
-    public SwingWorker<Boolean, Integer> createWorker () {
-        return new SwingWorker<Boolean, Integer>() {
+    public SwingWorker<Boolean, Integer> createWorker() {
+        return new SwingWorker<>() {
             @Override
-            protected Boolean doInBackground() throws Exception {
+            protected Boolean doInBackground() {
                 setMode(false);
-                stopwatch = Stopwatch.createStarted();
-                return Upscale.run(loadPath, savePath);
-            }       
+                Utils.stopwatch = Stopwatch.createStarted();
+                while (!loadPaths.isEmpty()) {
+                    File tempFile = new File(loadPaths.get(0));
+                    String local_path = savePath != null ? savePath : tempFile.getPath();
+                    local_path = local_path + "\\" + (savePath != null ? "" : "Upscaled_") + tempFile.getName();
+                    Upscale.run(loadPaths.get(0), local_path);
+                    loadPaths.remove(0);
+                    redrawCounter();
+                }
+                return true;
+            }
 
             @Override
-            protected void done () {
+            protected void done() {
                 boolean success = false;
                 try {
                     success = get();
-                } catch (Exception ex) {
-                    ex.printStackTrace();
+                } catch (InterruptedException | ExecutionException ex) {
                 }
-                stopwatch.stop();
+                Utils.stopwatch.stop();
                 setMode(true);
                 if (success) {
                     savePath = null;
-                    printStopwatch();
-                }        
+                    Utils.printStopwatch();
+                }
             }
         };
     }
 
-    private void printStopwatch () {
-        long minutes = stopwatch.elapsed(TimeUnit.MINUTES);
-        long seconds = stopwatch.elapsed(TimeUnit.SECONDS);
-        String minutesString = "";
-        if (minutes!=0) {
-            seconds = seconds%60;
-            minutesString = minutes+" ";
-            if (minutes>1)
-                minutesString+="Minutes";
-            else
-                minutesString+="Minute";
+    public void setMode(boolean mode) {
+        enableComponents(mainSplitPane, mode);
+        if (mode) {
+            button_start.setIcon(startSVG);
+            button_start.setText("Start");
+            button_export_folder.setIcon(saveSVG);
+            button_import.setIcon(loadSVG);
+            return;
         }
-        String secondsString="";
-        if (!minutesString.equals(""))
-            secondsString+=", ";
-        secondsString+=seconds;
-        secondsString += " Second";
-        if (seconds!=1)
-            secondsString += "s";
-        if (seconds > 10 || minutes >= 1)
-            write("Done In " + minutesString + secondsString,null);
-    }
-
-    public static void write (String text, Color color) {
-        StyledDocument doc = window.console.getStyledDocument();
-        Style style = window.console.addStyle("Color Style", null);
-        if (color == null) {
-            color = window.btnLapSRNx8.getForeground();
-        } else if (color.equals(SVGBLUE))
-            color=new Color(40,164,195);
-        StyleConstants.setForeground(style, color);
-        StyleConstants.setFontFamily(style, "Segoe UI");
-        StyleConstants.setFontSize(style, 13);
-        try {
-            int length = doc.getLength();
-            doc.insertString(length, " >    " + text + "\n", style);
-            doc.setParagraphAttributes(length, 1, style, false);
-            window.console.setCaretPosition(doc.getLength());
-        } catch (BadLocationException e) {
-            e.printStackTrace();
+        button_start.setText(null);
+        enableComponents(mainSplitPane, false);
+        if (Config.FIELD03.getBoolean() && blackLoadingGIF != null) {
+            button_start.setIcon(blackLoadingGIF);
+            button_start.setDisabledIcon(blackLoadingGIF);
+        } else if (whiteLoadingGIF != null) {
+            button_start.setIcon(whiteLoadingGIF);
+            button_start.setDisabledIcon(whiteLoadingGIF);
         }
     }
 
-    public void enableComponents (Container container, boolean enable) {
+    public void enableComponents(Container container, boolean enable) {
         Component[] components = container.getComponents();
         for (Component component : components) {
             component.setEnabled(enable);
@@ -542,49 +506,67 @@ public class MainApp {
 
     public static String[] getMode() {
         String thisMode = window.mode.getSelection().getActionCommand();
-        for (int i = 0; i < MODES.length; i++)
-            if (thisMode.equals(MODES[i][0]))
-                return MODES[i];
+        for (String[] strings : MODES) {
+            if (thisMode.equals(strings[0])) {
+                return strings;
+            }
+        }
         return new String[]{"ERROR"};
     }
+    
+    private void redrawCounter(){
+        item_counter.setText("Number of items: " +loadPaths.size()+".");
+    }
 
-    private void setSelected() {
-        Enumeration<AbstractButton> buttons = mode.getElements();
-        AbstractButton button;
-        while (buttons.hasMoreElements()) {
-            button = buttons.nextElement();
-            if (button.getActionCommand().equals(Config.FIELD02.getString()))
-                button.setSelected(true);
-        }       
-     }
 
-     private void startTabbedPanel () {
-         int index;
-         switch (Config.FIELD02.getString().substring(0, 2)) {
-            case "ES": index = 0; break;
-            case "ED": index = 1; break;
-            case "FS": index = 2; break;
-            default: index = 3;
-         }
-         tabbedPane.setSelectedIndex(index);
-     }
-	  	
-	    private void setSkin (boolean next) {
-            
-	        if (next)
-                Config.FIELD03.setValue(!Config.FIELD03.getBoolean());
+    // Variables declaration - do not modify                     
+    private javax.swing.JPanel EDSRpanel;
+    private javax.swing.JPanel ESPCNpanel;
+    private javax.swing.JPanel FSRCNNpanel;
+    private javax.swing.JPanel LapSRNpanel;
+    private javax.swing.JRadioButton btnESPCNx10;
+    private javax.swing.JRadioButton btnESPCNx11;
+    private javax.swing.JRadioButton btnESPCNx12;
+    private javax.swing.JRadioButton btnESPCNx13;
+    private javax.swing.JRadioButton btnESPCNx2;
+    private javax.swing.JRadioButton btnESPCNx3;
+    private javax.swing.JRadioButton btnESPCNx4;
+    private javax.swing.JRadioButton btnESPCNx5;
+    private javax.swing.JRadioButton btnESPCNx6;
+    private javax.swing.JRadioButton btnESPCNx7;
+    private javax.swing.JRadioButton btnESPCNx8;
+    private javax.swing.JRadioButton btnESPCNx9;
+    private javax.swing.JButton button_change_theme;
+    private javax.swing.JButton button_export_folder;
+    private javax.swing.JButton button_import;
+    private javax.swing.JButton button_remove_items;
+    private javax.swing.JButton button_start;
+    public javax.swing.JTextPane console;
+    private javax.swing.JTextPane item_counter;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JSeparator jSeparator10;
+    private javax.swing.JSeparator jSeparator11;
+    private javax.swing.JSeparator jSeparator12;
+    private javax.swing.JSeparator jSeparator13;
+    private javax.swing.JSeparator jSeparator14;
+    private javax.swing.JSeparator jSeparator15;
+    private javax.swing.JSeparator jSeparator16;
+    private javax.swing.JSeparator jSeparator2;
+    private javax.swing.JSeparator jSeparator3;
+    private javax.swing.JSeparator jSeparator4;
+    private javax.swing.JSeparator jSeparator5;
+    private javax.swing.JSeparator jSeparator6;
+    private javax.swing.JSeparator jSeparator7;
+    private javax.swing.JSeparator jSeparator8;
+    private javax.swing.JSeparator jSeparator9;
+    private javax.swing.JSplitPane mainSplitPane;
+    private javax.swing.ButtonGroup mode;
+    private javax.swing.JTabbedPane tabbedPane;
+    private javax.swing.JSplitPane upperSplitPanel;
+    // End of variables declaration                   
 
-	        if (Config.FIELD03.getBoolean()) {
-                com.formdev.flatlaf.intellijthemes.FlatGruvboxDarkHardIJTheme.install();
-                UIManager.put("TabbedPane.selectedBackground", DARK);
-            }
-            else {
-                com.formdev.flatlaf.intellijthemes.FlatCyanLightIJTheme.install();
-                UIManager.put("TabbedPane.selectedBackground", LIGHT);
-            }
-
-	        if (next)
-                SwingUtilities.updateComponentTreeUI(frame); 
-	    }
-	
 }
