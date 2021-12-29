@@ -1,21 +1,19 @@
 package core;
 
 import java.awt.Color;
-import org.bytedeco.opencv.opencv_core.Mat;
-import org.bytedeco.opencv.opencv_dnn_superres.DnnSuperResImpl;
-
-import static org.bytedeco.opencv.global.opencv_imgcodecs.*;
-
 import java.io.File;
 import java.net.URISyntaxException;
 import javax.swing.ImageIcon;
+import org.bytedeco.opencv.opencv_core.Mat;
+import org.bytedeco.opencv.opencv_dnn_superres.DnnSuperResImpl;
+import static org.bytedeco.opencv.global.opencv_imgcodecs.imwrite;
+import static org.bytedeco.opencv.global.opencv_imgcodecs.imread;
 
-@SuppressWarnings({"java:S106","java:S2093"})
+
 public class Upscale {
     private Upscale(){}
 
     public static boolean run(String loadPath, String savePath) {
-        Utils.write("aypaco",null);
         String[] mode = MainApp.getMode();
         Utils.write("Started Upscale Process ["+mode[0]+"]", null);
         ImageIcon s = new ImageIcon(loadPath);
@@ -45,6 +43,7 @@ public class Upscale {
 
 
         Utils.write("Loading Image",null);
+
         Mat image = imread(loadPath);
         if (image.empty()) {
             Utils.write("Error Loading Image",Utils.SCARLET);
@@ -70,7 +69,7 @@ public class Upscale {
                              \t Starting conversion""",null);
                 sr.upsample(image, imageNew);
                 
-                if(imageNew.isNull()){
+                if(imageNew.empty()){
                     Utils.write("Error UpScaling !",Utils.SCARLET);
                     return false;
                 }          
@@ -85,10 +84,11 @@ public class Upscale {
                 return false;
             }
                 finally {
-                    imageNew.close();
+                    imageNew.release();
                     sr.deallocate();
                     sr.close();
             }
         
     }
 }
+
