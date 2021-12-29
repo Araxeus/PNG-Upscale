@@ -176,7 +176,7 @@ public class MainApp extends javax.swing.JFrame {
 
         upperSplitPanel.setDividerLocation(300);
 
-        jPanel1.setLayout(new java.awt.GridLayout());
+        jPanel1.setLayout(new java.awt.GridLayout(1, 0));
 
         button_start.setIcon(startSVG);
         button_start.setText("Start");
@@ -448,8 +448,8 @@ public class MainApp extends javax.swing.JFrame {
                 Utils.stopwatch = Stopwatch.createStarted();
                 while (!loadPaths.isEmpty()) {
                     File tempFile = new File(loadPaths.get(0));
-                    String local_path = savePath != null ? savePath : tempFile.getPath();
-                    local_path = local_path + "\\" + (savePath != null ? "" : "Upscaled_") + tempFile.getName();
+                    String local_path = savePath != null ? savePath : tempFile.getParent();
+                    local_path = local_path + "\\" + (savePath != null ? "" : Config.FIELD02.getString()+"_")+ tempFile.getName();
                     Upscale.run(loadPaths.get(0), local_path);
                     loadPaths.remove(0);
                     redrawCounter();
