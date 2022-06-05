@@ -1,12 +1,12 @@
 # :fire: PNG Upscale -  AI Super Resolution :fire:
 > Small tool using pretrained models to upscale images
  
- ## [v1.0 is available on MediaFire due to large size](https://app.mediafire.com/nz88rdbl8u041) 
-* MediaFire Folder include full "[Models](http://www.mediafire.com/folder/05txvvxyww7ek/Models)" folder 📁 and executable Files 🖼️ to download
+ ## Download is available from the [Releases Page](https://github.com/Araxeus/PNG-Upscale/releases/latest) or [Google Drive](https://drive.google.com/drive/folders/1pMvzL5sqTRcJOhByU_Am5vU2oik_KHH2?usp=sharing) or [MediaFire](https://app.mediafire.com/nz88rdbl8u041)
+* Hosted Folder include full "[Models](https://github.com/Araxeus/PNG-Upscale/tree/main/Models)" folder 📁 and executable Files 🖼️ to download
 
-* `Windows 64bit` [[Exe]](http://www.mediafire.com/file/1zimjhmqm6bbslp/png-upscale-1.0_Windows64bit.exe/file) / [[Jar]](http://www.mediafire.com/file/8aacwpegzjlrhv0/png-upscale-1.0_Windows64bit.jar/file) 
-* `Linux 64bit` [[Jar]](http://www.mediafire.com/file/07e2dma5xpd2wro/png-upscale-1.0_LINUX_64bit.jar/file) 
-* `macOS 64bit` [[Jar]](http://www.mediafire.com/file/ubeqpou9lhkviov/png-upscale-1.0_macOS_64bit.jar/file)
+* `Windows 64bit` [[Exe]](https://github.com/Araxeus/PNG-Upscale/releases/download/v1.0/png-upscale-1.0_Windows64bit.exe) / [[Jar]](https://github.com/Araxeus/PNG-Upscale/releases/download/v1.0/png-upscale-1.0_Windows64bit.jar) 
+* `Linux 64bit` [[Jar]](https://github.com/Araxeus/PNG-Upscale/releases/download/v1.0/png-upscale-1.0_LINUX_64bit.jar) 
+* `macOS 64bit` [[Jar]](https://github.com/Araxeus/PNG-Upscale/releases/download/v1.0/png-upscale-1.0_macOS_64bit.jar)
 * :electron:	Download the executable corresponding with your operating system, and the Models folder
 * It's possible to download only some of the models if you want (It just wont let you use them inside the program)
 * The Models folder needs to be in the same directory as the Jar/Exe to use them
