@@ -5,15 +5,13 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.InvalidPropertiesFormatException;
 import java.util.Properties;
 
 @SuppressWarnings({"java:S1659", "java:S116", "java:S3066"})
 
 enum Config 
-        { 
-            FIELD01 ("Selected Directory", System.getProperty("user.home")) , 
+        {
             FIELD02 ("Selected Mode", "ESPCNx2") ,
             FIELD03 ("Dark Mode", true);
             
