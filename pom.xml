@@ -55,7 +55,7 @@
         <dependency>
             <groupId>com.formdev</groupId>
             <artifactId>flatlaf</artifactId>
-            <version>1.0</version>
+            <version>3.1</version>
         </dependency>
 
         <dependency>
